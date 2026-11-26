@@ -45,13 +45,12 @@ window.BTO_VERSIONS = [
       { type: 'bed', name: 'King bed (183 × 190 mattress)', x: 2160, y: 2220, w: 1930, d: 2060, h: 500, rot: 90, color: '#c4c6c7' },
       { type: 'cabinet', name: 'Bedside table', x: 2990, y: 995, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
       { type: 'cabinet', name: 'Bedside table', x: 2990, y: 3445, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
-      // Built-in wardrobe wrapping the west window: main run + tall corner unit + overhead cabinets (seasonal / travel storage)
+      // Built-in wardrobe: main run along the bathroom-side wall + tall corner unit beside the west window
       { type: 'wardrobe', name: 'Built-in wardrobe – main run', x: 1245, y: 4635, w: 2290, d: 600, h: 2600, rot: 180, color: '#eeebe5' },
       { type: 'wardrobe', name: 'Built-in wardrobe – tall corner unit', x: 400, y: 605, w: 1010, d: 600, h: 2600, rot: 270, color: '#eeebe5' },
-      { type: 'cabinet', name: 'Overhead cabinets above window – seasonal storage', x: 350, y: 2722, z: 2200, w: 3225, d: 500, h: 400, rot: 270, color: '#eeebe5' },
-      // CURTAINS — full length, ceiling to floor. Bedrooms: blackout. West window: under the overhead cabinets.
+      // CURTAINS — full length, ceiling to floor. Bedrooms: blackout.
       { type: 'curtain', name: 'Blackout curtain – master, north window', x: 1930, y: 190, w: 2440, d: 60, h: 2600, rot: 0, open: 0.75, color: '#d4d2cd' },
-      { type: 'curtain', name: 'Blackout curtain – master, west window (hot side)', x: 190, y: 2720, w: 3200, d: 60, h: 2190, rot: 270, open: 0.7, color: '#d4d2cd' },
+      { type: 'curtain', name: 'Blackout curtain – master, west window (hot side)', x: 190, y: 2720, w: 3200, d: 60, h: 2600, rot: 270, open: 0.7, color: '#d4d2cd' },
       { type: 'curtain', name: 'Blackout curtain – bedroom 2', x: 4460, y: 190, w: 2280, d: 60, h: 2600, rot: 0, open: 0.75, color: '#d4d2cd' },
       { type: 'curtain', name: 'Blackout curtain – bedroom 3', x: 7315, y: 190, w: 2170, d: 60, h: 2600, rot: 0, open: 0.75, color: '#d4d2cd' },
       { type: 'curtain', sheer: true, name: 'Sheer curtain – living (day)', x: 11795, y: 1320, w: 5150, d: 60, h: 2600, rot: 0, open: 0.35, color: '#fbfaf7' },
