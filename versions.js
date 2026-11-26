@@ -37,16 +37,17 @@ window.BTO_VERSIONS = [
   {
     id: 'v1',
     name: 'Version 1',
-    note: 'King bed, built-in wardrobe, TV on the east wall, plush sofa',
+    note: 'King bed, built-in wardrobe, TV on the east wall, plush sofa · Modern Minimal colours',
+    finishes: { wall: '#f4f3ef', floor: { bedroom: '#d9d7d2', living: '#e2e0db' } },
     furniture: [
       // MAIN BEDROOM — headboard on the solid wall shared with bedroom 2, away from the hot west window
-      { type: 'bed', name: 'King bed (183 × 190 mattress)', x: 2160, y: 2220, w: 1930, d: 2060, h: 500, rot: 90, color: '#9b8a76' },
-      { type: 'cabinet', name: 'Bedside table', x: 2990, y: 995, w: 480, d: 400, h: 550, rot: 90, color: '#c8b8a2' },
-      { type: 'cabinet', name: 'Bedside table', x: 2990, y: 3445, w: 480, d: 400, h: 550, rot: 90, color: '#c8b8a2' },
-      { type: 'wardrobe', name: 'Built-in wardrobe, floor to ceiling', x: 1245, y: 4635, w: 2290, d: 600, h: 2600, rot: 180, color: '#ebe5da' },
+      { type: 'bed', name: 'King bed (183 × 190 mattress)', x: 2160, y: 2220, w: 1930, d: 2060, h: 500, rot: 90, color: '#c4c6c7' },
+      { type: 'cabinet', name: 'Bedside table', x: 2990, y: 995, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
+      { type: 'cabinet', name: 'Bedside table', x: 2990, y: 3445, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
+      { type: 'wardrobe', name: 'Built-in wardrobe, floor to ceiling', x: 1245, y: 4635, w: 2290, d: 600, h: 2600, rot: 180, color: '#f1f0ec' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
-      { type: 'tv', name: 'TV console + 65" TV', x: 14170, y: 3930, w: 2000, d: 400, h: 450, rot: 90, color: '#7a6652' },
-      { type: 'sofa', style: 'soft', name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#cdbfa9' }
+      { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
+      { type: 'sofa', style: 'soft', name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }
     ]
   }
 ];
