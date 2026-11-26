@@ -19,7 +19,7 @@
 
    item = { type, name, x, y, w, d, h, rot, color }
      x,y  = centre of the item on the plan (mm); z = height off the floor (overhead cabinets)
-     extras: curtain {open: 0–1, sheer: true} · wardrobe {gap: floating mm, niche: [fromH, toH]}
+     extras: curtain {open: 0–1, sheer: true} · wardrobe {gap: floating mm, niche: [fromH, toH]} · panel {door: [from, to] mm along its width}
      w    = width (left↔right when rot=0), d = depth (front↔back), h = height
      rot  = degrees clockwise on the plan. At rot 0 the BACK of the item faces the
             top of the plan (bedroom windows) and the FRONT faces the bottom.
@@ -38,7 +38,7 @@ window.BTO_VERSIONS = [
   {
     id: 'v1',
     name: 'Version 1',
-    note: 'King bed, wrap-around wardrobe, curtains, TV wall, plush sofa, shoe cabinet, storeroom · Modern Minimal',
+    note: 'King bed, wrap-around wardrobe, curtains, TV wall, plush sofa, shoe cabinet, hidden storeroom door · Modern Minimal',
     finishes: { wall: '#f4f3ef', floor: { bedroom: '#d9d7d2', living: '#e2e0db' } },
     furniture: [
       // MAIN BEDROOM — headboard on the solid wall shared with bedroom 2, away from the hot west window
@@ -57,13 +57,8 @@ window.BTO_VERSIONS = [
       { type: 'curtain', name: 'Dim-out curtain – living (night)', x: 11795, y: 1440, w: 5150, d: 60, h: 2600, rot: 0, open: 0.85, color: '#d8d6d1' },
       // FOYER — full-height floating shoe cabinet on the kitchen-side wall, wall-matched, with a waist-height niche for keys/parcels
       { type: 'wardrobe', name: 'Shoe cabinet – full height, floating 20 cm, key niche', x: 9950, y: 7690, w: 1380, d: 400, h: 2600, rot: 270, gap: 200, niche: [1000, 1300], color: '#eeebe5' },
-      // STOREROOM (household shelter) — freestanding / removable shelving only, U-shape with an 80 cm aisle
-      { type: 'shelf', name: 'Storeroom shelving – back wall', x: 14145, y: 7650, w: 1600, d: 400, h: 2300, rot: 90, color: '#d9d9d6' },
-      { type: 'shelf', name: 'Storeroom shelving – north wall', x: 13022, y: 7050, w: 1845, d: 400, h: 2300, rot: 0, color: '#d9d9d6' },
-      { type: 'shelf', name: 'Storeroom shelf above luggage bay', x: 13022, y: 8250, z: 1100, w: 1845, d: 400, h: 1200, rot: 180, color: '#d9d9d6' },
-      { type: 'box', name: 'Luggage – large', x: 12450, y: 8260, w: 500, d: 300, h: 750, rot: 180, color: '#5d6b78' },
-      { type: 'box', name: 'Luggage – cabin', x: 12980, y: 8280, w: 400, d: 250, h: 550, rot: 180, color: '#8a6f5a' },
-      { type: 'box', name: 'Cordless vacuum + mop dock', x: 13620, y: 8250, w: 350, d: 350, h: 1100, rot: 180, color: '#3f4246' },
+      // STOREROOM (household shelter) — concealed door: full-height wall-colour panel wall on the foyer side, hidden push-latch door over the steel shelter door
+      { type: 'panel', name: 'Hidden door + panel wall – storeroom (shelter)', x: 11695, y: 7475, w: 1750, d: 40, h: 2600, rot: 90, door: [500, 1400], color: '#f0eee9' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
       { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
       { type: 'sofa', style: 'soft', seats: 3, name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }

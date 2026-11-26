@@ -294,6 +294,11 @@ function makeItem(it){
       part(-W,W,-D,-D+200,seat-120,h,col);part(-W,-W+150,-D,D,seat-120,seat+180,col);part(W-150,W,-D,D,seat-120,seat+180,col);break}
     case 'table':case 'desk':{h=h||750;part(-W,W,-D,D,h-30,h);legs(h-30);break}
     case 'chair':{h=h||850;const seat=450;part(-W+20,W-20,-D+20,D-20,seat-40,seat);legs(seat-40,35);part(-W+20,W-20,-D+20,-D+60,seat,h);break}
+    case 'panel':{h=h||2600;const body=part(-W,W,-D,D,0,h);const tx=laminate.clone();tx.needsUpdate=true;tx.repeat.set(Math.max(1,w/600),Math.max(1,h/600));body.material.map=tx;body.material.needsUpdate=true;
+      const gc=shade(col,0.62),dr=it.door||[0,0],n=Math.max(1,Math.round(w/600));
+      for(let i=1;i<n;i++){const x=-W+i*w/n;if(x>dr[0]-W+80&&x<dr[1]-W-80)continue;part(x-3,x+3,D,D+4,0,h,gc)}
+      if(it.door){const a=-W+dr[0],b=-W+dr[1];part(a-4,a+4,D,D+5,0,h,gc);part(b-4,b+4,D,D+5,0,h,gc);part(b-90,b-50,D,D+6,1000,1040,shade(col,0.45))}
+      const ol=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),outlineMat);ol.position.copy(body.position);inner.add(ol);break}
     case 'curtain':{h=h||2600;const open=curtainsClosed?0.02:(it.open??0.75),pw=Math.max(w*0.1,w*(1-open)/2);part(-W,W,-15,15,h-35,h-10,'#bdbbb6');
       const mat=new THREE.MeshLambertMaterial({color:col,side:THREE.DoubleSide,transparent:!!it.sheer,opacity:it.sheer?0.55:1,depthWrite:!it.sheer});
       for(const sd of[-1,1]){const g=new THREE.PlaneGeometry(m(pw),m(h-50),Math.max(8,Math.ceil(pw/30)),1),pp=g.attributes.position;
