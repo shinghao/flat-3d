@@ -24,7 +24,7 @@
             top of the plan (bedroom windows) and the FRONT faces the bottom.
             Bed head / sofa back / wardrobe back sit on the back side.
             rot 90 → back faces right · 180 → back faces bottom · 270 → back faces left
-     style: 'soft' on a sofa = plush cloud-style cushions
+     style: 'soft' on a sofa = plush cloud-style cushions; seats: number of seat cushions
      type = bed | sofa | table | desk | chair | wardrobe | cabinet | shelf | counter
             | fridge | tv | rug | plant | lamp | box
 
@@ -45,12 +45,12 @@ window.BTO_VERSIONS = [
       { type: 'cabinet', name: 'Bedside table', x: 2990, y: 995, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
       { type: 'cabinet', name: 'Bedside table', x: 2990, y: 3445, w: 480, d: 400, h: 550, rot: 90, color: '#ecebe7' },
       // Built-in wardrobe wrapping the west window: main run + tall corner unit + overhead cabinets (seasonal / travel storage)
-      { type: 'wardrobe', name: 'Built-in wardrobe – main run', x: 1245, y: 4635, w: 2290, d: 600, h: 2600, rot: 180, color: '#f1f0ec' },
-      { type: 'wardrobe', name: 'Built-in wardrobe – tall corner unit', x: 400, y: 605, w: 1010, d: 600, h: 2600, rot: 270, color: '#f1f0ec' },
-      { type: 'cabinet', name: 'Overhead cabinets above window – seasonal storage', x: 350, y: 2722, z: 2200, w: 3225, d: 500, h: 400, rot: 270, color: '#f1f0ec' },
+      { type: 'wardrobe', name: 'Built-in wardrobe – main run', x: 1245, y: 4635, w: 2290, d: 600, h: 2600, rot: 180, color: '#eeebe5' },
+      { type: 'wardrobe', name: 'Built-in wardrobe – tall corner unit', x: 400, y: 605, w: 1010, d: 600, h: 2600, rot: 270, color: '#eeebe5' },
+      { type: 'cabinet', name: 'Overhead cabinets above window – seasonal storage', x: 350, y: 2722, z: 2200, w: 3225, d: 500, h: 400, rot: 270, color: '#eeebe5' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
       { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
-      { type: 'sofa', style: 'soft', name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }
+      { type: 'sofa', style: 'soft', seats: 3, name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }
     ]
   }
 ];
