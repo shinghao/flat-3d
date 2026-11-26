@@ -301,10 +301,10 @@ function makeItem(it){
     default:{h=h||750;part(-W,W,-D,D,0,h)}
   }
   inner.traverse(o=>{if(o.isMesh){o.userData.item=it;o.castShadow=o.receiveShadow=true}});
-  grp.position.set(m(+it.x),0,m(+it.y));grp.rotation.y=-THREE.MathUtils.degToRad(+it.rot||0);
+  grp.position.set(m(+it.x),m(+it.z||0),m(+it.y));grp.rotation.y=-THREE.MathUtils.degToRad(+it.rot||0);
   grp.userData={item:it,h};
   // footprint AABB (plan mm) for walking collision
-  if(type!=='rug'){const a=THREE.MathUtils.degToRad(+it.rot||0),cs=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a)),hw=(W*cs+D*sn),hd=(W*sn+D*cs);
+  if(type!=='rug'&&!((+it.z||0)>1500)){const a=THREE.MathUtils.degToRad(+it.rot||0),cs=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a)),hw=(W*cs+D*sn),hd=(W*sn+D*cs);
     furnColl.push([+it.x-hw,+it.x+hw,+it.y-hd,+it.y+hd])}
   return grp;
 }
