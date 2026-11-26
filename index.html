@@ -67,6 +67,21 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .ht b{float:right}.ht input{width:100%;height:28px;margin:4px 0 0;accent-color:var(--acc)}
 .walking .orb,.walking .sheet,.walking .card{display:none}
 .walking #mini,.walking .ht{display:block}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.sunb{pointer-events:auto}.sunb i{background:#f5b301;box-shadow:0 0 0 3px rgba(245,179,1,.25)}
+.sunb.on{background:#f5b301;color:#1b1c1e;border-color:#f5b301}.sunb.on i{background:#fff}
+.sunb::after{display:none}
+.sunp{position:fixed;left:12px;right:72px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 64px);max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:none}
+.sun .sunp{display:block}.sun .chips,.sun .hint{display:none}.sun .card{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 250px)}
+.walking .sunp{display:none}
+.sunp .row{display:flex;align-items:center;gap:10px}
+.sunp .row b{flex:none;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sunp .row button{width:40px;height:40px;min-height:0;padding:0;border:1px solid var(--line);border-radius:50%;flex:none}
+.sunp #sdesc{font-size:12px;color:var(--sub);line-height:1.3}
+.sunp input{width:100%;height:30px;margin:4px 0;accent-color:#f5b301}
+.seg{display:flex;gap:4px}.seg button{flex:1;min-height:34px;font-size:12px;padding:0 6px;border:1px solid var(--line)}
+.leg{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:12px;color:var(--sub)}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 @media(max-width:600px){.hint{display:none}.sheet{width:auto;max-width:calc(100vw - 24px)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -76,7 +91,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <div class="top">
   <h1>Our 5-room BTO</h1>
   <p>5-Room Type 1(H) · 113 m²</p>
-  <button class="vbtn" id="vbtn" aria-haspopup="dialog"><i></i><span id="vname">Empty shell</span></button>
+  <div class="tools"><button class="vbtn" id="vbtn" aria-haspopup="dialog"><i></i><span id="vname">Empty shell</span></button><button class="vbtn sunb" id="sunb" aria-pressed="false"><i></i><span>Sun &amp; heat</span></button></div>
 </div>
 <details class="sheet" id="sheet">
   <summary>Details</summary>
@@ -89,6 +104,12 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <label class="ht">Your height <b id="htv">165 cm</b><input id="hti" type="range" min="140" max="200" step="1" value="165"></label>
 <canvas id="mini" width="300" height="200" aria-label="Minimap"></canvas>
 <div class="hint" id="hint"></div>
+<div class="sunp" id="sunp">
+  <div class="row"><button id="splay" aria-label="Play the day">▶</button><b id="stime">4:00 pm</b><span id="sdesc"></span></div>
+  <input id="sti" type="range" min="7" max="19.25" step="0.25" value="16" aria-label="Time of day">
+  <div class="seg" id="smo"><button data-mo="6">Jun</button><button data-mo="3" class="on">Mar / Sep</button><button data-mo="12">Dec</button></div>
+  <div class="leg"><span><i style="background:#ff4a1c"></i>Hot · afternoon sun</span><span><i style="background:#ffb020"></i>Morning sun</span><span><i style="background:#ffd98a"></i>Some sun</span><span><i style="background:#6fb7ff"></i>Soft light</span></div>
+</div>
 <div class="chips" id="chips"></div>
 <div class="orb" id="orb">
   <button data-o="zi" aria-label="Zoom in">+</button>
@@ -173,7 +194,7 @@ const VERSIONS=(Array.isArray(window.BTO_VERSIONS)&&window.BTO_VERSIONS.length?w
 // =================== THREE SETUP ===================
 const cv=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,logarithmicDepthBuffer:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 const scene=new THREE.Scene();
 const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
 const setBg=()=>{scene.background=new THREE.Color(isDark()?0x17181a:0xeceae4)};setBg();
@@ -181,8 +202,8 @@ new MutationObserver(setBg).observe(document.documentElement,{attributes:true});
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setBg);
 const camera=new THREE.PerspectiveCamera(45,1,0.1,300);
 const m=v=>v/1000, CX=m(7235), CZ=m(4800);
-scene.add(new THREE.HemisphereLight(0xffffff,0x8a8070,0.75));
-{const a=new THREE.DirectionalLight(0xffffff,0.55);a.position.set(-6,14,-8);scene.add(a);const b=new THREE.DirectionalLight(0xffffff,0.25);b.position.set(10,8,12);scene.add(b)}
+const hemi=new THREE.HemisphereLight(0xffffff,0x8a8070,0.75);scene.add(hemi);
+const keyA=new THREE.DirectionalLight(0xffffff,0.55);keyA.position.set(-6,14,-8);scene.add(keyA);const keyB=new THREE.DirectionalLight(0xffffff,0.25);keyB.position.set(10,8,12);scene.add(keyB);
 const wallMat=new THREE.MeshLambertMaterial({color:0xf7f6f2});
 const lowMat=new THREE.MeshLambertMaterial({color:0xdedbd3});
 const glassMat=new THREE.MeshLambertMaterial({color:0x9fc4d6,transparent:true,opacity:0.35,side:THREE.DoubleSide,depthWrite:false});
@@ -194,7 +215,7 @@ function clearGroup(g){while(g.children.length){const c=g.children.pop();c.trave
 function box(g,x0,x1,z0,z1,y0,y1,mat){
   if(y0<1500&&y1>300)wallColl.push([x0,x1,z0,z1]);
   const geo=new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0)),mesh=new THREE.Mesh(geo,mat);
-  mesh.position.set(m((x0+x1)/2),m((y0+y1)/2),m((z0+z1)/2));g.add(mesh);
+  mesh.position.set(m((x0+x1)/2),m((y0+y1)/2),m((z0+z1)/2));mesh.castShadow=mesh.receiveShadow=true;g.add(mesh);
   const e=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edgeMat);e.position.copy(mesh.position);g.add(e);
 }
 function buildWalls(list){
@@ -220,7 +241,7 @@ const labels=[],floors=[];
 for(const rm of rooms){
   const [x0,y0,x1,y1]=rm.r,w=m(x1-x0),d=m(y1-y0);
   const f=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:ROOM_COL[rm.k]}));
-  f.rotation.x=-Math.PI/2;f.position.set(m(x0)+w/2,0,m(y0)+d/2);scene.add(f);floors.push({mesh:f,k:rm.k});
+  f.rotation.x=-Math.PI/2;f.position.set(m(x0)+w/2,0,m(y0)+d/2);f.receiveShadow=true;scene.add(f);floors.push({mesh:f,k:rm.k});
   if(!rm.n)continue;
   const cw=512,ch=192,k=document.createElement('canvas');k.width=cw;k.height=ch;const g=k.getContext('2d');
   g.fillStyle='#1b1c1e';g.textAlign='center';g.textBaseline='middle';
@@ -246,18 +267,25 @@ const person=new THREE.Group();{const pm=new THREE.MeshLambertMaterial({color:0x
 
 // =================== FURNITURE ===================
 const shade=(hex,f)=>new THREE.Color(hex).multiplyScalar(f);
+function roundedBox(w,h,d,r){r=Math.min(r,w*0.49,h*0.49,d*0.49);const g=new THREE.BoxGeometry(w,h,d,14,10,14),p=g.attributes.position,v=new THREE.Vector3(),c=new THREE.Vector3();
+  const hx=w/2-r,hy=h/2-r,hz=d/2-r;for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);c.set(Math.max(-hx,Math.min(hx,v.x)),Math.max(-hy,Math.min(hy,v.y)),Math.max(-hz,Math.min(hz,v.z)));
+  v.sub(c);if(v.lengthSq()>0)v.setLength(r);v.add(c);p.setXYZ(i,v.x,v.y,v.z)}g.computeVertexNormals();return g}
 function makeItem(it){
   const w=+it.w||600,d=+it.d||600,type=it.type||'box',col=it.color||'#b8b0a4',grp=new THREE.Group(),inner=new THREE.Group();grp.add(inner);
-  const part=(x0,x1,z0,z1,y0,y1,c=col)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0)),new THREE.MeshLambertMaterial({color:c}));
-    mesh.position.set(m((x0+x1)/2),m((y0+y1)/2),m((z0+z1)/2));inner.add(mesh);return mesh};
+  const part=(x0,x1,z0,z1,y0,y1,c=col,r=0)=>{const geo=r?roundedBox(m(x1-x0),m(y1-y0),m(z1-z0),m(r)):new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0));
+    const mesh=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c}));mesh.position.set(m((x0+x1)/2),m((y0+y1)/2),m((z0+z1)/2));inner.add(mesh);return mesh};
   const cyl=(r0,r1,y0,y1,x,z,c)=>{const mesh=new THREE.Mesh(new THREE.CylinderGeometry(m(r0),m(r1),m(y1-y0),20),new THREE.MeshLambertMaterial({color:c}));mesh.position.set(m(x),m((y0+y1)/2),m(z));inner.add(mesh)};
   const W=w/2,D=d/2,dark=shade(col,0.72),legs=(top,s=45,c=dark)=>{for(const sx of[-1,1])for(const sz of[-1,1])part(sx*(W-40)-s/2,sx*(W-40)+s/2,sz*(D-40)-s/2,sz*(D-40)+s/2,0,top,c)};
   let h=+it.h;
   switch(type){
-    case 'bed':{h=h||500;part(-W,W,-D,D,80,h-200,dark);legs(80);part(-W+20,W-20,-D+90,D-20,h-200,h,'#f3f1ec');part(-W,W,-D,-D+80,80,h+500,col);
-      const n=w>1250?2:1,pw=(w-120)/n;for(let i=0;i<n;i++){const x0=-W+60+i*pw;part(x0+20,x0+pw-20,-D+120,-D+520,h,h+120,'#ffffff')}
-      part(-W+20,W-20,D-650,D-20,h,h+25,shade(col,1.15));break}
-    case 'sofa':{h=h||800;const seat=430;part(-W,W,-D,D,60,seat-120,dark);legs(60,40);part(-W+150,W-150,-D+180,D-20,seat-120,seat,col);
+    case 'bed':{h=h||500;part(-W,W,-D,D,80,h-220,col,30);legs(80);part(-W+40,W-40,-D+110,D-30,h-230,h,'#f3f1ec',60);part(-W,W,-D,-D+100,80,h+550,col,40);
+      const n=w>1250?2:1,pw=(w-160)/n;for(let i=0;i<n;i++){const x0=-W+80+i*pw;part(x0+20,x0+pw-20,-D+140,-D+560,h-10,h+130,'#ffffff',60)}
+      part(-W+30,W-30,D-700,D-20,h-5,h+30,shade(col,1.2),15);break}
+    case 'sofa':if(it.style==='soft'){h=h||760;const arm=Math.min(260,w*0.12),seat=430,n=Math.max(1,Math.round((w-2*arm)/800)),cw=(w-2*arm)/n;
+      part(-W,W,-D,D,20,260,col,120);
+      for(let i=0;i<n;i++){const x0=-W+arm+i*cw;part(x0+8,x0+cw-8,-D+300,D-10,240,seat+60,shade(col,1.08),210);part(x0+12,x0+cw-12,-D+20,-D+380,300,h,shade(col,1.04),200)}
+      part(-W,-W+arm,-D,D,20,seat+150,col,arm/2.05);part(W-arm,W,-D,D,20,seat+150,col,arm/2.05);break}
+    {h=h||800;const seat=430;part(-W,W,-D,D,60,seat-120,dark);legs(60,40);part(-W+150,W-150,-D+180,D-20,seat-120,seat,col);
       part(-W,W,-D,-D+200,seat-120,h,col);part(-W,-W+150,-D,D,seat-120,seat+180,col);part(W-150,W,-D,D,seat-120,seat+180,col);break}
     case 'table':case 'desk':{h=h||750;part(-W,W,-D,D,h-30,h);legs(h-30);break}
     case 'chair':{h=h||850;const seat=450;part(-W+20,W-20,-D+20,D-20,seat-40,seat);legs(seat-40,35);part(-W+20,W-20,-D+20,-D+60,seat,h);break}
@@ -272,7 +300,7 @@ function makeItem(it){
     case 'lamp':{h=h||1600;cyl(150,170,0,30,0,0,dark);cyl(12,12,30,h-250,0,0,dark);cyl(130,200,h-260,h,0,0,col);break}
     default:{h=h||750;part(-W,W,-D,D,0,h)}
   }
-  inner.traverse(o=>{if(o.isMesh)o.userData.item=it});
+  inner.traverse(o=>{if(o.isMesh){o.userData.item=it;o.castShadow=o.receiveShadow=true}});
   grp.position.set(m(+it.x),0,m(+it.y));grp.rotation.y=-THREE.MathUtils.degToRad(+it.rot||0);
   grp.userData={item:it,h};
   // footprint AABB (plan mm) for walking collision
@@ -434,6 +462,61 @@ function drawMini(){mg.clearRect(0,0,300,200);mg.drawImage(base,0,0);
   mg.fillStyle='rgba(226,85,43,.28)';mg.beginPath();mg.moveTo(x,y);mg.arc(x,y,34,a-0.6,a+0.6);mg.closePath();mg.fill();
   mg.fillStyle='#e2552b';mg.beginPath();mg.arc(x,y,6,0,7);mg.fill();mg.strokeStyle='#fff';mg.lineWidth=2;mg.stroke()}
 
+// =================== SUN & HEAT ===================
+// Assumes the top of the plan (bedroom windows) faces north. Change PLAN_NORTH_DEG if a compass says otherwise.
+const PLAN_NORTH_DEG=0, LAT=1.33*Math.PI/180;
+const sunLight=new THREE.DirectionalLight(0xfff1d6,1.0);sunLight.castShadow=true;sunLight.visible=false;
+sunLight.shadow.mapSize.set(2048,2048);Object.assign(sunLight.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:70});sunLight.shadow.bias=-0.0004;sunLight.shadow.normalBias=0.02;
+sunLight.target.position.set(CX,0,CZ);scene.add(sunLight,sunLight.target);
+const sunGroup=new THREE.Group();sunGroup.visible=false;scene.add(sunGroup);
+// invisible ceiling so light only enters through windows
+{const inv=new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false});
+ for(const r of rooms){if(r.k==='strip'||r.k==='ledge')continue;const [x0,y0,x1,y1]=r.r;const c=new THREE.Mesh(new THREE.BoxGeometry(m(x1-x0)+0.2,0.1,m(y1-y0)+0.2),inv);c.position.set(m((x0+x1)/2),m(H)+0.05,m((y0+y1)/2));c.castShadow=true;scene.add(c)}}
+function textSprite(lines,col,wm=3.4){const k=document.createElement('canvas');k.width=640;k.height=180;const g=k.getContext('2d');
+  g.fillStyle='rgba(255,255,255,.94)';g.beginPath();g.roundRect?g.roundRect(6,6,628,168,30):g.rect(6,6,628,168);g.fill();g.fillStyle=col;g.fillRect(6,6,22,168);
+  g.fillStyle='#1b1c1e';g.font='600 54px "Instrument Sans",system-ui,sans-serif';g.textBaseline='middle';g.fillText(lines[0],52,62);
+  g.font='40px "Instrument Sans",system-ui,sans-serif';g.fillStyle='#55585c';g.fillText(lines[1]||'',52,128);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(k),depthTest:false,transparent:true}));sp.scale.set(wm,wm*180/640,1);sp.renderOrder=10;return sp}
+// heat bands on the outside of exterior walls: [x1,y1,x2,y2, outward dx,dy, colour]
+const BANDS=[[0,0,0,4995,-1,0,0xff4a1c],[14470,1130,14470,8575,1,0,0xffb020],[0,0,9120,0,0,-1,0x6fb7ff],[9120,1130,14470,1130,0,-1,0x6fb7ff],[4318,9595,9650,9595,0,1,0xffd98a]];
+for(const [x1,y1,x2,y2,dx,dy,c] of BANDS){const L=Math.hypot(x2-x1,y2-y1),hz=y1===y2;
+  const b=new THREE.Mesh(new THREE.BoxGeometry(hz?m(L):0.06,m(H)+0.15,hz?0.06:m(L)),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0.6}));
+  b.position.set(m((x1+x2)/2)+dx*0.17,m(H)/2,m((y1+y2)/2)+dy*0.17);sunGroup.add(b)}
+[[['Hot wall','Afternoon sun 1:30–7pm'],'#ff4a1c',-1.9,4.0,2.3],[['Morning sun','Wall only, no windows'],'#ffb020',16.3,4.0,4.8],
+ [['Soft north light','Little direct sun'],'#6fb7ff',4.6,4.0,-1.4],[['Kitchen window','Some sun Nov–Feb'],'#ffd98a',7.0,4.0,10.9]]
+ .forEach(([t,c,x,y,z])=>{const s=textSprite(t,c);s.position.set(x,y,z);sunGroup.add(s)});
+// compass
+{const k=document.createElement('canvas');k.width=k.height=256;const g=k.getContext('2d');g.translate(128,128);
+ g.strokeStyle='#1b1c1e';g.lineWidth=6;g.beginPath();g.arc(0,0,100,0,7);g.stroke();
+ g.fillStyle='#e2552b';g.beginPath();g.moveTo(0,-92);g.lineTo(22,0);g.lineTo(-22,0);g.fill();g.fillStyle='#1b1c1e';g.beginPath();g.moveTo(0,92);g.lineTo(22,0);g.lineTo(-22,0);g.fill();
+ g.font='700 40px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('N',0,-74);g.font='600 30px system-ui,sans-serif';g.fillText('E',76,0);g.fillText('W',-76,0);g.fillText('S',0,78);
+ const cp=new THREE.Mesh(new THREE.PlaneGeometry(2.2,2.2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(k),transparent:true,depthWrite:false}));
+ cp.rotation.x=-Math.PI/2;cp.rotation.z=-THREE.MathUtils.degToRad(PLAN_NORTH_DEG);cp.position.set(-2.2,0.02,-1.6);sunGroup.add(cp)}
+const sunBall=new THREE.Mesh(new THREE.SphereGeometry(0.6,24,16),new THREE.MeshBasicMaterial({color:0xffc21a}));sunGroup.add(sunBall);
+let sunPath=null;
+function sunDir(clock,month){ // returns world unit vector toward the sun, or null if below horizon
+  const decl=({6:23.4,3:0,12:-23.4}[month]||0)*Math.PI/180,Hh=(clock-13.1)*15*Math.PI/180; // solar noon in Singapore ≈ 1:05pm
+  const up=Math.sin(LAT)*Math.sin(decl)+Math.cos(LAT)*Math.cos(decl)*Math.cos(Hh);
+  const east=-Math.cos(decl)*Math.sin(Hh),north=Math.sin(decl)*Math.cos(LAT)-Math.cos(decl)*Math.sin(LAT)*Math.cos(Hh);
+  const a=THREE.MathUtils.degToRad(PLAN_NORTH_DEG),x=east*Math.cos(a)+north*Math.sin(a),z=-(north*Math.cos(a)-east*Math.sin(a));
+  return up>0.01?new THREE.Vector3(x,up,z).normalize():null}
+let sunOn=false,sunT=16,sunMo=3,sunPlay=false;
+const fmt=t=>{const h=Math.floor(t),mm=Math.round((t-h)*60);return `${((h+11)%12)+1}:${String(mm).padStart(2,'0')} ${h<12?'am':'pm'}`};
+function sunText(t){if(t<8)return 'Sunrise. Low sun from the east, mostly on the blank east wall.';if(t<11)return 'Morning sun on the east side. Bedrooms stay soft and cool.';
+  if(t<14.5)return 'Sun almost overhead. Little comes in through the windows.';if(t<18)return 'Sun in the west. The main bedroom side window heats up.';return 'Low western sun. Strongest glare into the main bedroom.'}
+function updateSun(){const d=sunDir(sunT,sunMo);document.getElementById('stime').textContent=fmt(sunT);document.getElementById('sdesc').textContent=sunText(sunT);
+  if(!d){sunLight.intensity=0;sunBall.visible=false;return}
+  sunBall.visible=true;sunBall.position.set(CX,0,CZ).addScaledVector(d,18);sunLight.position.set(CX,0,CZ).addScaledVector(d,30);sunLight.intensity=0.5+0.9*Math.min(1,d.y*2.2)}
+function buildPath(){if(sunPath){sunGroup.remove(sunPath);sunPath.geometry.dispose()}const pts=[];for(let t=6.5;t<=19.75;t+=0.25){const d=sunDir(t,sunMo);if(d)pts.push(new THREE.Vector3(CX,0,CZ).addScaledVector(d,18))}
+  sunPath=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineDashedMaterial({color:0xf5b301,dashSize:.4,gapSize:.25}));sunPath.computeLineDistances();sunGroup.add(sunPath)}
+function setSun(on){sunOn=on;document.body.classList.toggle('sun',on);const b=document.getElementById('sunb');b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
+  sunGroup.visible=sunLight.visible=on;keyA.visible=keyB.visible=!on;hemi.intensity=on?0.68:0.75;if(on){buildPath();updateSun();if(mode==='3d'&&!tween)focus(CX,CZ,fitDist()*1.15)}else{sunPlay=false;document.getElementById('splay').textContent='▶'}}
+document.getElementById('sunb').onclick=()=>setSun(!sunOn);
+const sti=document.getElementById('sti');sti.oninput=()=>{sunT=+sti.value;sunPlay=false;document.getElementById('splay').textContent='▶';updateSun()};
+document.getElementById('smo').onclick=e=>{const b=e.target.closest('button');if(!b)return;sunMo=+b.dataset.mo;for(const x of b.parentNode.children)x.classList.toggle('on',x===b);buildPath();updateSun()};
+document.getElementById('splay').onclick=()=>{sunPlay=!sunPlay;document.getElementById('splay').textContent=sunPlay?'❚❚':'▶';if(sunPlay&&sunT>=19.2)sunT=7};
+function sunStep(dt){if(!sunOn||!sunPlay)return;sunT+=dt*1.0;if(sunT>19.25)sunT=7;sti.value=sunT;updateSun()}
+
 // =================== START ===================
 let lastW=0,lastH=0;
 function resize(){const de=document.documentElement,w=de.clientWidth||innerWidth,h=de.clientHeight||innerHeight;if(w===lastW&&h===lastH)return;lastW=w;lastH=h;
@@ -443,7 +526,7 @@ let startId=location.hash.slice(1);
 if(!VERSIONS.some(v=>v.id===startId)){startId='shell';try{const s=localStorage.getItem('bto-ver');if(VERSIONS.some(v=>v.id===s))startId=s}catch(e){}}
 applyVersion(startId);setMode('3d');
 const clock=new THREE.Clock();
-(function loop(){const dt=Math.min(clock.getDelta(),0.05);
+(function loop(){const dt=Math.min(clock.getDelta(),0.05);sunStep(dt);
   if(mode==='walk'){walkStep(dt);drawMini()}
   else{if(tween){tween.k=Math.min(1,tween.k+dt/0.7);const e=1-Math.pow(1-tween.k,3);orbit.target.lerpVectors(tween.t0,tween.t1,e);camera.position.lerpVectors(tween.p0,tween.p1,e);if(tween.k>=1)tween=null}
     orbStep(dt);const t=orbit.target,cx=Math.max(0,Math.min(m(14470),t.x)),cz=Math.max(0,Math.min(m(9595),t.z));
