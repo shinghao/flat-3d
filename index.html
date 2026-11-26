@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>BTO 5-Room 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, architectural, precise
+   IDEA: an architect's white study model on a drafting table
+   PICTURE: the flat itself, full screen, orbitable
+   COLOUR and TYPE: white walls, warm floor tones per room type, ink UI; Instrument Sans
+   LAYOUT: model fills screen, slim top bar, view buttons bottom, room sizes in a sheet */
+:root{color-scheme:light dark;--bg:light-dark(#eceae4,#17181a);--ink:light-dark(#1b1c1e,#ececea);--panel:light-dark(rgba(255,255,255,.92),rgba(30,31,34,.92));--line:light-dark(#d6d3cb,#3a3b3f);--acc:#e2552b}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 "Instrument Sans",system-ui,sans-serif}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.top{position:fixed;top:0;left:0;right:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
+.top h1{margin:0;font-size:17px;font-weight:600;line-height:1.2}
+.top p{margin:2px 0 0;font-size:13px;opacity:.7}
+.bar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(8px)}
+button{font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:transparent;border:0;border-radius:10px;min-height:44px;padding:0 14px;cursor:pointer}
+button.on{background:var(--ink);color:var(--bg)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.sheet{position:fixed;top:56px;right:12px;width:min(300px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--line);border-radius:12px;backdrop-filter:blur(8px);pointer-events:auto}
+.sheet summary{list-style:none;cursor:pointer;padding:10px 14px;font-weight:600;font-size:14px;min-height:44px;display:flex;align-items:center;justify-content:space-between}
+.sheet summary::after{content:"+";font-size:18px}.sheet[open] summary::after{content:"–"}
+.sheet table{width:100%;border-collapse:collapse;font-size:13px}
+.sheet td{padding:5px 14px;border-top:1px solid var(--line)}
+.sheet td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet .note{padding:8px 14px 12px;font-size:12px;opacity:.7;border-top:1px solid var(--line)}
+.pad{position:fixed;left:16px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 70px);display:none;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px}
+.pad.show{display:grid}
+.pad button{background:var(--panel);border:1px solid var(--line);font-size:20px;padding:0;user-select:none;-webkit-user-select:none;touch-action:none}
+.pad .f{grid-column:2}.pad .l{grid-column:1;grid-row:2}.pad .b{grid-column:2;grid-row:2}.pad .r{grid-column:3;grid-row:2}
+.hint{position:fixed;right:16px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 70px);font-size:12px;opacity:.65;max-width:180px;text-align:right}
+.chips{position:fixed;left:0;right:0;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 64px);display:flex;gap:6px;overflow-x:auto;padding:0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;background:var(--panel);border:1px solid var(--line);min-height:40px;font-size:13px;border-radius:20px}
+.orb{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px}
+.orb button{width:48px;height:48px;padding:0;background:var(--panel);border:1px solid var(--line);font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none}
+.walking .orb{display:none}
+#stick{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(20,20,20,.18);display:none;pointer-events:none;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+#knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#mini{position:fixed;left:12px;top:64px;width:150px;height:100px;border-radius:10px;border:1px solid var(--line);background:var(--panel);display:none;pointer-events:none}
+.walking #mini{display:block}
+.ht{position:fixed;left:12px;top:172px;width:150px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:12px;display:none}
+.ht b{float:right}.ht input{width:100%;height:28px;margin:4px 0 0;accent-color:#e2552b}
+.walking .ht{display:block}
+.walking .sheet{display:none}
+.hint{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 116px)}
+.pad{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 70px)}
+@media(max-width:600px){.sheet{width:auto}.orb{top:auto;transform:none;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 116px)}.hint{display:none}.top p{max-width:60vw}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="top">
+  <div><h1>Our 5-room BTO</h1><p>5-Room Type 1(H) · 113 m² · empty shell</p></div>
+</div>
+<details class="sheet" id="sheet">
+  <summary>Room sizes</summary>
+  <table id="rt"></table>
+  <div class="note">From the HDB plan, measured to wall centre-lines in mm. Ceiling 2.6 m, door and window heights are typical HDB values, not from the plan.</div>
+</details>
+<div id="stick"><div id="knob"></div></div>
+<label class="ht" id="ht">Your height <b id="htv">165 cm</b><input id="hti" type="range" min="140" max="200" step="1" value="165"></label>
+<canvas id="mini" width="300" height="200" aria-label="Minimap"></canvas>
+<div class="hint" id="hint">Drag to orbit · pinch to zoom · double-tap floor to centre there</div>
+<div class="chips" id="chips"></div>
+<div class="orb" id="orb">
+  <button data-o="zi" aria-label="Zoom in">+</button>
+  <button data-o="zo" aria-label="Zoom out">−</button>
+  <button data-o="rl" aria-label="Rotate left">⟲</button>
+  <button data-o="rr" aria-label="Rotate right">⟳</button>
+</div>
+<div class="bar">
+  <button id="v3d" class="on">3D</button>
+  <button id="vtop">Plan</button>
+  <button id="vwalk">Walk</button>
+  <button id="vlab" class="on">Labels</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+// ---------- plan data (mm, origin = top-left of main bedroom, y down the drawing) ----------
+const H=2600, DOOR=2100, S=200, P=120;
+const rooms=[
+  {n:'Main bedroom',r:[0,0,3250,4995],c:'#d9c3a5',d:'3250 × 4995'},
+  {n:'Bedroom 2',r:[3250,0,6170,3875],c:'#d9c3a5',d:'2920 × 3875'},
+  {n:'Bedroom 3',r:[6170,0,9120,3875],c:'#d9c3a5',d:'2950 × 3875'},
+  {n:'Living / dining',r:[9120,1130,14470,6725],c:'#c9c2b6',d:'5350 × 5595'},
+  {n:'',r:[3250,3875,9120,4995],c:'#c9c2b6'},
+  {n:'',r:[5838,4995,9120,6945],c:'#c9c2b6'},
+  {n:'',r:[9120,6725,11870,6945],c:'#c9c2b6'},
+  {n:'Foyer',r:[9650,6945,11870,8450],c:'#c9c2b6',sm:1},
+  {n:'Kitchen',r:[5838,6945,9650,9595],c:'#b9c4c6',d:'3710 × 2650'},
+  {n:'Bath 1',r:[1323,4995,3913,6945],c:'#aebcc4',d:'2590 × 1950',sm:1},
+  {n:'Bath 2',r:[3913,4995,5838,6945],c:'#aebcc4',d:'1925 × 1950',sm:1},
+  {n:'Service yard',r:[4318,6945,5838,9595],c:'#b9c4c6',d:'1520 × 2650',sm:1},
+  {n:'',r:[3768,6945,4318,9595],c:'#a9b0b0'},
+  {n:'Aircon ledge',r:[1323,6945,3768,7945],c:'#9fa5a5',d:'1000 deep',sm:1},
+  {n:'Shelter',r:[11870,6725,14470,8575],c:'#bdb6ad',d:'2600 × 1850',sm:1}
+];
+// walls: [x1,y1,x2,y2,thickness,openings[{a,b,lo,hi,w?}], height]
+const W=(a,b)=>({a,b,lo:0,hi:DOOR});
+const Win=(a,b,lo=900,hi=2200)=>({a,b,lo,hi,w:1});
+const walls=[
+  // facade, bedrooms
+  [0,0,3250,0,S,[Win(750,2940)]],
+  [3250,0,6170,0,S,[Win(3400,5400)]],
+  [6170,0,9120,0,S,[Win(6300,8250)]],
+  [0,0,0,4995,S,[Win(1110,4230)]],
+  [0,4995,1323,4995,S],
+  // bedroom partitions
+  [3250,0,3250,4995,P,[W(4050,4900)]],
+  [6170,0,6170,3875,P],
+  [9120,0,9120,3875,P],
+  [3250,3875,6170,3875,P,[W(5050,5900)]],
+  [6170,3875,9120,3875,P,[W(6300,7150)]],
+  // living facade + right side
+  [9120,1130,14470,1130,S,[Win(9300,14300,500,2200)]],
+  [14470,1130,14470,8575,S],
+  // household shelter
+  [11870,6725,14470,6725,250],
+  [11870,6725,11870,8575,250,[W(7150,7950)]],
+  [11870,8575,14470,8575,250],
+  // entrance
+  [9650,8450,11870,8450,S,[W(10250,11250)]],
+  // kitchen
+  [9650,6945,9650,9595,S],
+  [4318,9595,9650,9595,S,[Win(6050,7550,1050,2200)]],
+  [5838,6945,5838,9595,P,[W(7950,8700)]],
+  // baths
+  [1323,4995,1323,6945,S],
+  [1323,4995,5838,4995,P,[W(2450,3150),W(5050,5750)]],
+  [3913,4995,3913,6945,P],
+  [5838,4995,5838,6945,S],
+  [1323,6945,5838,6945,P,[Win(2300,2900,1500,2100)]],
+  // yard drying strip + ledge parapets (low)
+  [3768,6945,3768,9595,S,[],1000],
+  [3768,9595,4318,9595,S,[],1000],
+  [1323,7945,3768,7945,100,[],300],
+  [1323,6945,1323,7945,100,[],300]
+];
+
+// ---------- three setup ----------
+const cv=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,logarithmicDepthBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();
+const dark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+const setBg=()=>scene.background=new THREE.Color(dark()?0x17181a:0xeceae4);setBg();
+new MutationObserver(setBg).observe(document.documentElement,{attributes:true});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setBg);
+
+const camera=new THREE.PerspectiveCamera(45,1,0.1,300);
+const m=v=>v/1000;
+const CX=m(7235),CZ=m(4800);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8070,0.75));
+const sun=new THREE.DirectionalLight(0xffffff,0.55);sun.position.set(-6,14,-8);scene.add(sun);
+const sun2=new THREE.DirectionalLight(0xffffff,0.25);sun2.position.set(10,8,12);scene.add(sun2);
+
+const wallMat=new THREE.MeshLambertMaterial({color:0xf7f6f2});
+const lowMat=new THREE.MeshLambertMaterial({color:0xdedbd3});
+const glassMat=new THREE.MeshLambertMaterial({color:0x9fc4d6,transparent:true,opacity:0.35,side:THREE.DoubleSide,depthWrite:false});
+const edgeMat=new THREE.LineBasicMaterial({color:0x55585c,transparent:true,opacity:0.55});
+
+const colliders=[];
+function box(x0,x1,z0,z1,y0,y1,mat){
+  if(y0<1500&&y1>300)colliders.push([x0,x1,z0,z1]);
+  const g=new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0));
+  const mesh=new THREE.Mesh(g,mat);mesh.position.set(m((x0+x1)/2),m((y0+y1)/2),m((z0+z1)/2));
+  scene.add(mesh);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),edgeMat);e.position.copy(mesh.position);scene.add(e);
+}
+for(const [x1,y1,x2,y2,t,ops=[],h=H] of walls){
+  const hz=y1===y2, c=hz?y1:x1, s=Math.min(hz?x1:y1,hz?x2:y2)-t/2, e=Math.max(hz?x1:y1,hz?x2:y2)+t/2;
+  const mat=h<H?lowMat:wallMat;
+  const piece=(a,b,lo,hi)=>{if(b-a<1||hi-lo<1)return;hz?box(a,b,c-t/2,c+t/2,lo,hi,mat):box(c-t/2,c+t/2,a,b,lo,hi,mat)};
+  let cur=s;
+  for(const o of [...ops].sort((p,q)=>p.a-q.a)){
+    piece(cur,o.a,0,h);piece(o.a,o.b,0,o.lo);piece(o.a,o.b,o.hi,h);
+    if(o.w){const g=new THREE.PlaneGeometry(m(o.b-o.a),m(o.hi-o.lo));const gl=new THREE.Mesh(g,glassMat);
+      gl.position.set(hz?m((o.a+o.b)/2):m(c),m((o.lo+o.hi)/2),hz?m(c):m((o.a+o.b)/2));if(!hz)gl.rotation.y=Math.PI/2;scene.add(gl)}
+    cur=o.b;
+  }
+  piece(cur,e,0,h);
+}
+
+// floors + labels
+const labels=[];
+for(const rm of rooms){
+  const [x0,y0,x1,y1]=rm.r,w=m(x1-x0),d=m(y1-y0);
+  const f=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:rm.c}));
+  f.rotation.x=-Math.PI/2;f.position.set(m(x0)+w/2,0,m(y0)+d/2);scene.add(f);
+  if(!rm.n)continue;
+  const cw=512,ch=192,k=document.createElement('canvas');k.width=cw;k.height=ch;const g=k.getContext('2d');
+  g.fillStyle='#1b1c1e';g.textAlign='center';g.textBaseline='middle';
+  g.font='600 58px "Instrument Sans",system-ui,sans-serif';g.fillText(rm.n,cw/2,rm.d?70:96);
+  if(rm.d){g.font='48px "Instrument Sans",system-ui,sans-serif';g.globalAlpha=.7;g.fillText(rm.d,cw/2,140)}
+  const tex=new THREE.CanvasTexture(k);tex.anisotropy=4;
+  const lw=Math.min(w*0.9,rm.sm?1.7:2.6),lab=new THREE.Mesh(new THREE.PlaneGeometry(lw,lw*ch/cw),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));
+  lab.rotation.x=-Math.PI/2;lab.position.set(m(x0)+w/2,0.01,m(y0)+d/2);scene.add(lab);labels.push(lab);
+}
+// suggested study, dashed outline
+{const pts=[[12230,1130],[12230,4650],[14470,4650]].map(([x,y])=>new THREE.Vector3(m(x),0.012,m(y)));
+ const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineDashedMaterial({color:0x444444,dashSize:.15,gapSize:.1}));l.computeLineDistances();scene.add(l);labels.push(l)}
+// drying rack bars
+for(let i=0;i<5;i++)box(3850+i*100,3880+i*100,7100,9450,1900,1930,lowMat);
+// ground
+const gnd=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.05}));
+gnd.rotation.x=-Math.PI/2;gnd.position.set(CX,-0.01,CZ);scene.add(gnd);
+
+// room table
+document.getElementById('rt').innerHTML=rooms.filter(r=>r.d).map(r=>`<tr><td>${r.n}</td><td>${r.d}</td></tr>`).join('');
+
+// ---------- controls ----------
+const orbit=new THREE.OrbitControls(camera,cv);
+orbit.enableDamping=true;orbit.target.set(CX,0,CZ);orbit.maxPolarAngle=Math.PI/2-0.05;orbit.minDistance=2.5;orbit.maxDistance=150;orbit.screenSpacePanning=false;orbit.rotateSpeed=0.8;
+orbit.enablePan=false;orbit.minPolarAngle=0.12;orbit.maxPolarAngle=1.35;
+orbit.addEventListener('start',()=>{tween=null});
+const btn={d:document.getElementById('v3d'),t:document.getElementById('vtop'),w:document.getElementById('vwalk')};
+const stick=document.getElementById('stick'),knob=document.getElementById('knob'),mini=document.getElementById('mini'),hint=document.getElementById('hint');
+let mode='3d',yaw=0,pitch=0;const held={};
+function setMode(md){
+  mode=md;for(const k in btn)btn[k].classList.toggle('on',(k==='d'&&md==='3d')||(k==='t'&&md==='top')||(k==='w'&&md==='walk'));
+  stick.style.display='none';mv=null;lk=null;orbit.enabled=md!=='walk';tween=null;
+  document.body.classList.toggle('walking',md==='walk');
+  hint.textContent=md==='walk'?'Left thumb: move · right side: look · tap a room to jump':'Drag to orbit · pinch to zoom · double-tap floor to centre there';
+  planLook(md==='top');
+  if(md==='3d'){orbit.target.set(CX,0,CZ);const sc=fitDist()/19.7;camera.position.set(CX-7*sc,13*sc,CZ+13*sc);camera.up.set(0,1,0)}
+  if(md==='top'){const pt=camera.aspect<1;orbit.target.set(CX,0,CZ);camera.position.set(CX+(pt?0.001:0),fitTop(),CZ+(pt?0:0.001))}
+  if(md==='walk'){camera.position.set(m(10750),eyeH(),m(8100));yaw=0.35;pitch=0;camera.fov=camera.aspect<1?80:65;camera.updateProjectionMatrix()}
+  orbit.update();
+}
+function fitDist(){const h=2*Math.atan(Math.tan(THREE.MathUtils.degToRad(22.5))*camera.aspect);return Math.max(19,15.5/(2*Math.tan(h/2))*1.05)}
+function planLook(on){
+  camera.fov=on?20:45;camera.updateProjectionMatrix();orbit.enableRotate=!on;orbit.enablePan=on;
+  orbit.minPolarAngle=on?0:0.12;orbit.maxDistance=on?150:60;
+  orbit.touches.ONE=on?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;orbit.mouseButtons.LEFT=on?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;
+  if(on)hint.textContent='Drag to move · pinch to zoom';
+  const rot=on&&camera.aspect<1?Math.PI/2:0;labels.forEach(l=>{if(l.isMesh)l.rotation.z=rot});
+}
+function fitTop(){
+  const a=camera.aspect,pt=a<1,w=pt?10.6:15.5,d=pt?15.5:10.6;
+  const need=Math.max(w/a,d)*1.3;return need/2/Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+}
+btn.d.onclick=()=>setMode('3d');btn.t.onclick=()=>setMode('top');btn.w.onclick=()=>setMode('walk');
+const lb=document.getElementById('vlab');lb.onclick=()=>{const on=!lb.classList.contains('on');lb.classList.toggle('on',on);labels.forEach(l=>l.visible=on)};
+// ---- game-style walk input: floating thumbstick (left) + drag-to-look (right) ----
+let mv=null,lk=null;const stickV={x:0,y:0},keyHeld={};
+cv.addEventListener('pointerdown',e=>{
+  if(mode!=='walk')return;
+  if(!mv&&e.clientX<innerWidth*0.45&&e.pointerType!=='mouse'){mv={id:e.pointerId,x:e.clientX,y:e.clientY};stick.style.left=e.clientX+'px';stick.style.top=e.clientY+'px';stick.style.display='block';knob.style.transform='translate(0,0)'}
+  else if(!lk)lk={id:e.pointerId,x:e.clientX,y:e.clientY};
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove',e=>{
+  if(mode!=='walk')return;
+  if(mv&&e.pointerId===mv.id){let dx=e.clientX-mv.x,dy=e.clientY-mv.y;const L=Math.hypot(dx,dy),R=50;if(L>R){dx*=R/L;dy*=R/L}
+    stickV.x=dx/R;stickV.y=dy/R;knob.style.transform=`translate(${dx}px,${dy}px)`}
+  else if(lk&&e.pointerId===lk.id){yaw-=(e.clientX-lk.x)*0.006;pitch=Math.max(-1.1,Math.min(1.1,pitch-(e.clientY-lk.y)*0.005));lk.x=e.clientX;lk.y=e.clientY}
+});
+const endP=e=>{if(mv&&e.pointerId===mv.id){mv=null;stickV.x=stickV.y=0;stick.style.display='none'}if(lk&&e.pointerId===lk.id)lk=null};
+cv.addEventListener('pointerup',endP);cv.addEventListener('pointercancel',endP);
+addEventListener('keydown',e=>{keyHeld[e.code]=1});addEventListener('keyup',e=>{keyHeld[e.code]=0});
+const R_=230;
+function blocked(x,z){x*=1000;z*=1000;
+  if(x<R_||z<R_||x>14470-R_||z>9595-R_)return true;
+  for(const c of colliders)if(x+R_>c[0]&&x-R_<c[1]&&z+R_>c[2]&&z-R_<c[3])return true;return false}
+function walkStep(dt){
+  const k=keyHeld;let fx=stickV.x,fz=stickV.y;
+  if(k.KeyW||k.ArrowUp)fz-=1;if(k.KeyS||k.ArrowDown)fz+=1;if(k.KeyA)fx-=1;if(k.KeyD)fx+=1;
+  if(k.ArrowLeft)yaw+=1.8*dt;if(k.ArrowRight)yaw-=1.8*dt;
+  const L=Math.hypot(fx,fz);if(L>1){fx/=L;fz/=L}
+  const sp=1.6*dt,s=Math.sin(yaw),c=Math.cos(yaw);
+  const dx=(fx*c+fz*s)*sp,dz=(-fx*s+fz*c)*sp,p=camera.position;
+  if(!blocked(p.x+dx,p.z))p.x+=dx;if(!blocked(p.x,p.z+dz))p.z+=dz;
+  camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0);
+}
+// eye height from body height (eyes ~11 cm below top of head)
+const hti=document.getElementById('hti'),htv=document.getElementById('htv');
+let bodyCm=165;try{const v=+localStorage.getItem('bto-ht');if(v>=140&&v<=200)bodyCm=v}catch(e){}
+hti.value=bodyCm;htv.textContent=bodyCm+' cm';
+function eyeH(){return (bodyCm-11)/100}
+hti.addEventListener('input',()=>{bodyCm=+hti.value;htv.textContent=bodyCm+' cm';if(mode==='walk')camera.position.y=eyeH();person.scale.setScalar(bodyCm/170);try{localStorage.setItem('bto-ht',bodyCm)}catch(e){}});
+// 1 m floor grid
+{const pts=[];for(let x=0;x<=15;x++)pts.push(x,0.004,0,x,0.004,9.6);for(let z=0;z<=9;z++)pts.push(0,0.004,z,14.47,0.004,z);
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+ const grid=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:0.09}));scene.add(grid);labels.push(grid)}
+// life-size person for scale (1.70 m), standing in the living room
+const person=new THREE.Group();{const pm=new THREE.MeshLambertMaterial({color:0xe2552b});
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.2,1.2,16),pm);body.position.y=0.95;person.add(body);
+ const legs=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.13,0.5,16),pm);legs.position.y=0.25;person.add(legs);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,16,12),pm);head.position.y=1.58;person.add(head);
+ person.position.set(m(12900),0,m(2700));person.scale.setScalar(bodyCm/170);scene.add(person)}
+// minimap
+const mg=mini.getContext('2d'),MS=300/15000;
+const base=document.createElement('canvas');base.width=300;base.height=200;{const g=base.getContext('2d');
+  g.translate(8,4);for(const r of rooms){g.fillStyle=r.c;g.fillRect(r.r[0]*MS,r.r[1]*MS,(r.r[2]-r.r[0])*MS,(r.r[3]-r.r[1])*MS)}
+  g.fillStyle='#3a3b3f';for(const c of colliders)g.fillRect(c[0]*MS,c[2]*MS,Math.max(1.5,(c[1]-c[0])*MS),Math.max(1.5,(c[3]-c[2])*MS))}
+function drawMini(){
+  mg.clearRect(0,0,300,200);mg.drawImage(base,0,0);
+  const x=8+camera.position.x*1000*MS,y=4+camera.position.z*1000*MS,a=-yaw-Math.PI/2;
+  mg.fillStyle='rgba(226,85,43,.28)';mg.beginPath();mg.moveTo(x,y);mg.arc(x,y,34,a-0.6,a+0.6);mg.closePath();mg.fill();
+  mg.fillStyle='#e2552b';mg.beginPath();mg.arc(x,y,6,0,7);mg.fill();mg.strokeStyle='#fff';mg.lineWidth=2;mg.stroke();
+}
+
+// ---- focus helpers: tween orbit target + camera ----
+let tween=null;
+function focus(tx,tz,dist){
+  if(mode==='walk')setMode('3d');
+  const off=camera.position.clone().sub(orbit.target);
+  const dir=off.lengthSq()>0.01?off.normalize():new THREE.Vector3(-0.4,0.75,0.55).normalize();
+  if(dir.y<0.35){dir.y=0.35;dir.normalize()}
+  const t2=new THREE.Vector3(tx,0,tz);
+  tween={t0:orbit.target.clone(),t1:t2,p0:camera.position.clone(),p1:t2.clone().add(dir.multiplyScalar(dist)),k:0};
+  if(mode==='top'){mode='3d';btn.t.classList.remove('on');btn.d.classList.add('on');planLook(false)}
+}
+const spots=[
+  ['Whole flat',7235,4800,17],['Living',11800,3900,8],['Main bed',1625,2500,7],['Bed 2',4710,1940,6.5],
+  ['Bed 3',7645,1940,6.5],['Kitchen',7740,8270,6.5],['Baths',3580,5970,6],['Foyer',10760,7700,6]
+];
+const chips=document.getElementById('chips');
+chips.innerHTML=spots.map((s,i)=>`<button data-i="${i}">${s[0]}</button>`).join('');
+chips.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const s=spots[b.dataset.i];
+  if(mode==='walk'){camera.position.set(m(s[1]),eyeH(),m(s[2]));if(blocked(camera.position.x,camera.position.z))camera.position.x+=0.3;yaw=0;pitch=0;return}
+  focus(m(s[1]),m(s[2]),s[0]==='Whole flat'?fitDist():s[3]*(camera.aspect<1?1.35:1))});
+// double-tap / double-click floor to re-centre
+const ray=new THREE.Raycaster(),floorPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+function recentre(x,y){
+  if(mode!=='3d')return;
+  const r=cv.getBoundingClientRect();
+  ray.setFromCamera(new THREE.Vector2((x-r.left)/r.width*2-1,-(y-r.top)/r.height*2+1),camera);
+  const p=new THREE.Vector3();if(!ray.ray.intersectPlane(floorPlane,p))return;
+  focus(Math.max(0,Math.min(m(14470),p.x)),Math.max(0,Math.min(m(9595),p.z)),Math.max(4,Math.min(camera.position.distanceTo(orbit.target),9)));
+}
+cv.addEventListener('dblclick',e=>recentre(e.clientX,e.clientY));
+let lastTap=0,tapStart=null;
+cv.addEventListener('touchstart',e=>{if(e.touches.length===1)tapStart={x:e.touches[0].clientX,y:e.touches[0].clientY,t:performance.now()};else tapStart=null},{passive:true});
+cv.addEventListener('touchend',e=>{
+  if(!tapStart||e.changedTouches.length!==1)return;const t=e.changedTouches[0];
+  if(Math.hypot(t.clientX-tapStart.x,t.clientY-tapStart.y)>12||performance.now()-tapStart.t>300)return;
+  const now=performance.now();if(now-lastTap<350){recentre(t.clientX,t.clientY);lastTap=0}else lastTap=now;
+},{passive:true});
+// on-screen orbit buttons (hold to repeat)
+const orbHeld={};
+for(const b of document.querySelectorAll('#orb button')){
+  const k=b.dataset.o;
+  b.addEventListener('pointerdown',e=>{e.preventDefault();orbHeld[k]=1;tween=null;b.setPointerCapture(e.pointerId)});
+  for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>orbHeld[k]=0);
+}
+function orbStep(dt){
+  const off=camera.position.clone().sub(orbit.target);
+  if(orbHeld.rl||orbHeld.rr){const a=(orbHeld.rl?1:-1)*1.2*dt;off.applyAxisAngle(new THREE.Vector3(0,1,0),a)}
+  if(orbHeld.zi||orbHeld.zo){const s=orbHeld.zi?Math.exp(-1.3*dt):Math.exp(1.3*dt);const L=Math.max(orbit.minDistance,Math.min(orbit.maxDistance,off.length()*s));off.setLength(L)}
+  camera.position.copy(orbit.target).add(off);
+}
+
+let lastW=0,lastH=0;addEventListener('resize',()=>resize());
+function resize(){const de=document.documentElement,w=de.clientWidth||innerWidth,h=de.clientHeight||innerHeight;if(w===lastW&&h===lastH)return;lastW=w;lastH=h;renderer.setSize(w,h,true);camera.aspect=w/h;camera.updateProjectionMatrix();if(mode==='top')setMode('top')}
+const ro=new ResizeObserver(()=>resize());ro.observe(document.documentElement);resize();setMode('3d');
+
+const clock=new THREE.Clock();
+function loop(){
+  const dt=Math.min(clock.getDelta(),0.05);
+  if(mode==='walk'){
+    walkStep(dt);drawMini();
+  } else {
+    if(tween){tween.k=Math.min(1,tween.k+dt/0.7);const e=1-Math.pow(1-tween.k,3);
+      orbit.target.lerpVectors(tween.t0,tween.t1,e);camera.position.lerpVectors(tween.p0,tween.p1,e);if(tween.k>=1)tween=null}
+    orbStep(dt);
+    // keep the pivot inside the flat so it can never drift away
+    const t=orbit.target,cx=Math.max(0,Math.min(m(14470),t.x)),cz=Math.max(0,Math.min(m(9595),t.z));
+    if(cx!==t.x||cz!==t.z||t.y!==0){const d=new THREE.Vector3(cx-t.x,-t.y,cz-t.z);t.add(d);camera.position.add(d)}
+    orbit.update();
+  }
+  renderer.render(scene,camera);requestAnimationFrame(loop);
+}
+loop();
+}
+</script>
+</body>
+</html>
