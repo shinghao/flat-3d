@@ -29,7 +29,7 @@
      type = bed | sofa | table | desk | chair | wardrobe | cabinet | shelf | counter
             | fridge | tv | rug | plant | lamp | box
 
-   Removable wall ids: mb-br2, br2-corridor, br2-br3, br3-corridor, br3-living,
+   Removable wall ids: yard-parapet (open service-yard side), mb-br2, br2-corridor, br2-br3, br3-corridor, br3-living,
                        bath-top, bath-divider, bath-bottom, kitchen-yard
    ========================================================================== */
 window.BTO_VERSIONS = [
@@ -40,6 +40,9 @@ window.BTO_VERSIONS = [
     name: 'Version 1',
     note: 'King bed, wrap-around wardrobe, curtains, TV wall, plush sofa, shoe cabinet, hidden storeroom door · Modern Minimal',
     finishes: { wall: '#f4f3ef', floor: { bedroom: '#d9d7d2', living: '#e2e0db' } },
+    // Service yard: HDB hands it over open; add a window (needs a permit, done by the window supplier)
+    removeWalls: ['yard-parapet'],
+    addWalls: [[3768, 6945, 3768, 9595, 200, [win(7050, 9490, 1000, 2450)]]],
     furniture: [
       // MAIN BEDROOM — headboard on the solid wall shared with bedroom 2, away from the hot west window
       { type: 'bed', name: 'King bed (183 × 190 mattress)', x: 2160, y: 2220, w: 1930, d: 2060, h: 500, rot: 90, color: '#c4c6c7' },
