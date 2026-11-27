@@ -131,7 +131,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
   </div>
 </div>
 
-<script>window.door=(a,b,hi=2100)=>({a,b,lo:0,hi});window.win=(a,b,lo=900,hi=2200)=>({a,b,lo,hi,w:1});</script>
+<script>window.door=(a,b,hi=2100,sw=0,kind='flush')=>({a,b,lo:0,hi,sw,kind});window.win=(a,b,lo=900,hi=2200)=>({a,b,lo,hi,w:1});</script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="versions.js"></script>
@@ -139,7 +139,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 {
 // =================== SHELL (from the HDB plan, mm) ===================
 const H=2600, S=200, P=120, door=window.door, win=window.win;
-const ROOM_COL={bedroom:'#d9c3a5',living:'#c9c2b6',kitchen:'#b9c4c6',wet:'#aebcc4',yard:'#b9c4c6',strip:'#a9b0b0',ledge:'#9fa5a5',shelter:'#bdb6ad'};
+const ROOM_COL={bedroom:'#e2d3bf',living:'#dedcd7',kitchen:'#d6d8d8',wet:'#c3cbd0',yard:'#cfd2d2',strip:'#b9bdbd',ledge:'#aeb2b2',shelter:'#cfcbc4'};
 const rooms=[
   {n:'Main bedroom',r:[0,0,3250,4995],k:'bedroom',d:'3250 × 4995'},
   {n:'Bedroom 2',r:[3250,0,6170,3875],k:'bedroom',d:'2920 × 3875'},
@@ -164,23 +164,23 @@ const SHELL_WALLS=[
   [6170,0,9120,0,S,[win(6300,8250)]],
   [0,0,0,4995,S,[win(1110,4230)]],
   [0,4995,1323,4995,S],
-  [3250,0,3250,4995,P,[door(4050,4900)],H,'mb-br2'],
+  [3250,0,3250,4995,P,[door(4050,4900,2100,-1)],H,'mb-br2'],
   [6170,0,6170,3875,P,[],H,'br2-br3'],
   [9120,0,9120,1130,S],
   [9120,1130,9120,3875,P,[],H,'br3-living'],
-  [3250,3875,6170,3875,P,[door(5050,5900)],H,'br2-corridor'],
-  [6170,3875,9120,3875,P,[door(6300,7150)],H,'br3-corridor'],
-  [9120,1130,14470,1130,S,[win(9300,14300,500,2200)]],
+  [3250,3875,6170,3875,P,[door(5050,5900,2100,-1)],H,'br2-corridor'],
+  [6170,3875,9120,3875,P,[door(6300,7150,2100,-1)],H,'br3-corridor'],
+  [9120,1130,14470,1130,S,[win(9300,14300)]],
   [14470,1130,14470,8575,S],
   [11870,6725,14470,6725,250],
-  [11870,6725,11870,8575,250,[door(7150,7950)]],
+  [11870,6725,11870,8575,250,[door(7150,7950,2000,0,'steel')]],
   [11870,8575,14470,8575,250],
-  [9650,8450,11870,8450,S,[door(10250,11250)]],
+  [9650,8450,11870,8450,S,[door(10250,11250,2100,-1,'timber')]],
   [9650,6945,9650,9595,S],
   [4318,9595,9650,9595,S,[win(6050,7550,1050,2200)]],
-  [5838,6945,5838,9595,P,[door(7950,8700)],H,'kitchen-yard'],
+  [5838,6945,5838,9595,P,[door(7950,8700,2100,-1)],H,'kitchen-yard'],
   [1323,4995,1323,6945,S],
-  [1323,4995,5838,4995,P,[door(2450,3150),door(5050,5750)],H,'bath-top'],
+  [1323,4995,5838,4995,P,[door(2450,3150,2100,1),door(5050,5750,2100,1)],H,'bath-top'],
   [3913,4995,3913,6945,P,[],H,'bath-divider'],
   [5838,4995,5838,6945,S],
   [1323,6945,5838,6945,P,[win(2300,2900,1500,2100)],H,'bath-bottom'],
@@ -202,17 +202,21 @@ new MutationObserver(setBg).observe(document.documentElement,{attributes:true});
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setBg);
 const camera=new THREE.PerspectiveCamera(45,1,0.1,300);
 const m=v=>v/1000, CX=m(7235), CZ=m(4800);
-const hemi=new THREE.HemisphereLight(0xffffff,0x8a8070,0.75);scene.add(hemi);
-const keyA=new THREE.DirectionalLight(0xffffff,0.55);keyA.position.set(-6,14,-8);scene.add(keyA);const keyB=new THREE.DirectionalLight(0xffffff,0.25);keyB.position.set(10,8,12);scene.add(keyB);
+const hemi=new THREE.HemisphereLight(0xffffff,0xb3aa9c,0.95);scene.add(hemi);
+const keyA=new THREE.DirectionalLight(0xffffff,0.42);keyA.position.set(m(7235)-3,22,m(4800)-4);keyA.target.position.set(m(7235),0,m(4800));keyA.castShadow=true;keyA.shadow.mapSize.set(2048,2048);
+Object.assign(keyA.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:60});keyA.shadow.bias=-0.0004;keyA.shadow.normalBias=0.02;keyA.shadow.radius=4;scene.add(keyA,keyA.target);const keyB=new THREE.DirectionalLight(0xffffff,0.22);keyB.position.set(10,8,12);scene.add(keyB);
 const wallMat=new THREE.MeshLambertMaterial({color:0xf7f6f2});
 const lowMat=new THREE.MeshLambertMaterial({color:0xdedbd3});
 const glassMat=new THREE.MeshLambertMaterial({color:0x7fa8a4,transparent:true,opacity:0.42,side:THREE.DoubleSide,depthWrite:false});
-const frameMat=new THREE.MeshLambertMaterial({color:0x9ca2a7});
+const frameMat=new THREE.MeshLambertMaterial({color:0xb7bbbf});
+const handleMat=new THREE.MeshLambertMaterial({color:0x55595d});
+const sillMat=new THREE.MeshLambertMaterial({color:0xe9e7e2});
+const DOOR_COL={flush:0xe9e7e1,timber:0x8a6b52,steel:0x8e9397};
 const edgeMat=new THREE.LineBasicMaterial({color:0x55585c,transparent:true,opacity:0.5});
 const wallGroup=new THREE.Group(),furnGroup=new THREE.Group();scene.add(wallGroup,furnGroup);
 let wallColl=[],furnColl=[];
 
-function clearGroup(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==wallMat&&o.material!==lowMat&&o.material!==glassMat&&o.material!==frameMat&&o.material!==edgeMat&&o.material.dispose)o.material.dispose()})}}
+function clearGroup(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==wallMat&&o.material!==lowMat&&o.material!==glassMat&&o.material!==frameMat&&o.material!==handleMat&&o.material!==sillMat&&o.material!==edgeMat&&o.material.dispose)o.material.dispose()})}}
 function box(g,x0,x1,z0,z1,y0,y1,mat){
   if(y0<1500&&y1>300)wallColl.push([x0,x1,z0,z1]);
   const geo=new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0)),mesh=new THREE.Mesh(geo,mat);
@@ -230,12 +234,24 @@ function buildWalls(list){
       piece(cur,o.a,0,h);piece(o.a,o.b,0,o.lo);piece(o.a,o.b,o.hi,h);
       if(o.w){const gl=new THREE.Mesh(new THREE.PlaneGeometry(m(o.b-o.a),m(o.hi-o.lo)),glassMat);
         gl.position.set(hz?m((o.a+o.b)/2):m(c),m((o.lo+o.hi)/2),hz?m(c):m((o.a+o.b)/2));if(!hz)gl.rotation.y=Math.PI/2;wallGroup.add(gl);
-        // aluminium frame: perimeter + mullions (casement / fixed panels)
-        const fr=(a0,a1,y0,y1)=>{const g=new THREE.BoxGeometry(hz?m(a1-a0):0.07,m(y1-y0),hz?0.07:m(a1-a0)),mm=new THREE.Mesh(g,frameMat);
-          mm.position.set(hz?m((a0+a1)/2):m(c),m((y0+y1)/2),hz?m(c):m((a0+a1)/2));wallGroup.add(mm)};
-        fr(o.a,o.b,o.lo,o.lo+50);fr(o.a,o.b,o.hi-50,o.hi);fr(o.a,o.a+50,o.lo,o.hi);fr(o.b-50,o.b,o.lo,o.hi);
-        const np=Math.max(2,Math.round((o.b-o.a)/750));for(let i=1;i<np;i++){const x=o.a+i*(o.b-o.a)/np;fr(x-22,x+22,o.lo,o.hi)}
-        if(o.hi-o.lo>1600)fr(o.a,o.b,o.hi-650,o.hi-610)}
+        // HDB aluminium window: perimeter, top transom row, vertical panes ~500 mm, handles on opening panes, inside sill
+        const fr=(a0,a1,y0,y1,mt=frameMat,dp=0.06,off=0)=>{const g=new THREE.BoxGeometry(hz?m(a1-a0):dp,m(y1-y0),hz?dp:m(a1-a0)),mm=new THREE.Mesh(g,mt);
+          mm.position.set(hz?m((a0+a1)/2):m(c)+off,m((y0+y1)/2),hz?m(c)+off:m((a0+a1)/2));mm.castShadow=true;wallGroup.add(mm)};
+        fr(o.a,o.b,o.lo,o.lo+45);fr(o.a,o.b,o.hi-45,o.hi);fr(o.a,o.a+45,o.lo,o.hi);fr(o.b-45,o.b,o.lo,o.hi);
+        const tr=o.hi-Math.round((o.hi-o.lo)*0.3);fr(o.a,o.b,tr-20,tr+20);
+        const np=Math.max(2,Math.round((o.b-o.a)/500));
+        for(let i=1;i<np;i++){const x=o.a+i*(o.b-o.a)/np;fr(x-18,x+18,o.lo,o.hi)}
+        for(let i=0;i<np;i+=2){const x=o.a+(i+0.82)*(o.b-o.a)/np;for(const sd of[-1,1])fr(x-8,x+8,o.lo+(tr-o.lo)*0.45,o.lo+(tr-o.lo)*0.45+120,handleMat,0.02,sd*0.045)}
+        for(const sd of[-1,1]){const g=new THREE.BoxGeometry(hz?m(o.b-o.a+60):0.07,0.025,hz?0.07:m(o.b-o.a+60)),sl=new THREE.Mesh(g,sillMat);
+          sl.position.set(hz?m((o.a+o.b)/2):m(c)+sd*m(t/2+20),m(o.lo)-0.0125,hz?m(c)+sd*m(t/2+20):m((o.a+o.b)/2));sl.receiveShadow=true;wallGroup.add(sl)}}
+      else if(o.kind){ // door leaf
+        const L=o.b-o.a,dc=DOOR_COL[o.kind]||DOOR_COL.flush,mat=new THREE.MeshLambertMaterial({color:dc});
+        const leaf=new THREE.Mesh(new THREE.BoxGeometry(m(L-10),m(o.hi-10),0.04),mat);leaf.castShadow=leaf.receiveShadow=true;
+        const piv=new THREE.Group();piv.position.set(hz?m(o.a):m(c),0,hz?m(c):m(o.a));
+        leaf.position.set(m(L/2),m(o.hi/2),0);piv.add(leaf);
+        const el=new THREE.LineSegments(new THREE.EdgesGeometry(leaf.geometry),edgeMat);el.position.copy(leaf.position);piv.add(el);
+        const hd=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.02,0.06),handleMat);hd.position.set(m(L-90),1.0,0);piv.add(hd);
+        const base=hz?0:-Math.PI/2;piv.rotation.y=base+(o.sw?(hz?o.sw*-Math.PI/2:o.sw*Math.PI/2)*0.92:0);wallGroup.add(piv)}
       cur=o.b;
     }
     piece(cur,e,0,h);
@@ -243,11 +259,25 @@ function buildWalls(list){
   for(let i=0;i<5;i++)box(wallGroup,3850+i*100,3880+i*100,7100,9450,1900,1930,lowMat);
 }
 
+// floor textures (near-white so finishes can tint them)
+const FLOOR_TEX=(()=>{const mk=(fn)=>{const k=document.createElement('canvas');k.width=k.height=512;const g=k.getContext('2d');fn(g);const t=new THREE.CanvasTexture(k);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;return t};
+  const noise=(g,a)=>{for(let i=0;i<9000;i++){const v=200+Math.random()*55|0;g.fillStyle=`rgba(${v},${v},${v},${a})`;g.fillRect(Math.random()*512,Math.random()*512,2,2)}};
+  const tiles=(n,grout)=>g=>{g.fillStyle='#fbfbfa';g.fillRect(0,0,512,512);noise(g,.25);g.fillStyle=grout;const st=512/n;for(let i=0;i<=n;i++){g.fillRect(i*st-1,0,2,512);g.fillRect(0,i*st-1,512,2)}};
+  return {
+    tile600:{tex:mk(tiles(2,'#c9c7c2')),size:1.2},       // 600x600 porcelain
+    tile300:{tex:mk(tiles(4,'#bdbbb6')),size:1.2},       // 300x300 wet areas
+    plank:{tex:mk(g=>{g.fillStyle='#f6f2ec';g.fillRect(0,0,512,512);const ph=512/6;
+      for(let r=0;r<6;r++){const off=(r*173)%512;g.fillStyle=r%2?'#efe9e1':'#f4efe8';g.fillRect(0,r*ph,512,ph);
+        g.globalAlpha=.10;for(let k=0;k<40;k++){g.fillStyle='#9a8a74';g.fillRect(0,r*ph+Math.random()*ph,512,1)}g.globalAlpha=1;
+        g.fillStyle='#cfc6b9';g.fillRect(0,r*ph,512,1.5);g.fillRect(off,r*ph,1.5,ph);g.fillRect((off+256)%512,r*ph,1.5,ph)}}),size:1.2}  // vinyl planks 200 wide
+  }})();
+const FLOOR_KIND={bedroom:'plank',living:'tile600',kitchen:'tile600',wet:'tile300',yard:'tile300',strip:'tile300',ledge:'tile300',shelter:'tile300'};
 // floors + room labels
 const labels=[],floors=[];
 for(const rm of rooms){
   const [x0,y0,x1,y1]=rm.r,w=m(x1-x0),d=m(y1-y0);
-  const f=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:ROOM_COL[rm.k]}));
+  const ft=FLOOR_TEX[FLOOR_KIND[rm.k]],tx=ft.tex.clone();tx.needsUpdate=true;tx.repeat.set(w/ft.size,d/ft.size);
+  const f=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:ROOM_COL[rm.k],map:tx}));
   f.rotation.x=-Math.PI/2;f.position.set(m(x0)+w/2,0,m(y0)+d/2);f.receiveShadow=true;scene.add(f);floors.push({mesh:f,k:rm.k});
   if(!rm.n)continue;
   const cw=512,ch=192,k=document.createElement('canvas');k.width=cw;k.height=ch;const g=k.getContext('2d');
@@ -542,7 +572,7 @@ function updateSun(){const d=sunDir(sunT,sunMo);document.getElementById('stime')
 function buildPath(){if(sunPath){sunGroup.remove(sunPath);sunPath.geometry.dispose()}const pts=[];for(let t=6.5;t<=19.75;t+=0.25){const d=sunDir(t,sunMo);if(d)pts.push(new THREE.Vector3(CX,0,CZ).addScaledVector(d,18))}
   sunPath=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineDashedMaterial({color:0xf5b301,dashSize:.4,gapSize:.25}));sunPath.computeLineDistances();sunGroup.add(sunPath)}
 function setSun(on){sunOn=on;document.body.classList.toggle('sun',on);const b=document.getElementById('sunb');b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
-  sunGroup.visible=sunLight.visible=on;keyA.visible=keyB.visible=!on;hemi.intensity=on?0.68:0.75;if(on){buildPath();updateSun();if(mode==='3d'&&!tween)focus(CX,CZ,fitDist()*1.15)}else{sunPlay=false;document.getElementById('splay').textContent='▶'}}
+  sunGroup.visible=sunLight.visible=on;keyA.visible=keyB.visible=!on;hemi.intensity=on?0.72:0.95;if(on){buildPath();updateSun();if(mode==='3d'&&!tween)focus(CX,CZ,fitDist()*1.15)}else{sunPlay=false;document.getElementById('splay').textContent='▶'}}
 document.getElementById('sunb').onclick=()=>setSun(!sunOn);
 const sti=document.getElementById('sti');sti.oninput=()=>{sunT=+sti.value;sunPlay=false;document.getElementById('splay').textContent='▶';updateSun()};
 document.getElementById('smo').onclick=e=>{const b=e.target.closest('button');if(!b)return;sunMo=+b.dataset.mo;for(const x of b.parentNode.children)x.classList.toggle('on',x===b);buildPath();updateSun()};
