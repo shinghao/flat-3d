@@ -131,7 +131,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
   </div>
 </div>
 
-<script>window.door=(a,b,hi=2100,sw=0,kind='flush')=>({a,b,lo:0,hi,sw,kind});window.win=(a,b,lo=900,hi=2200)=>({a,b,lo,hi,w:1});</script>
+<script>window.door=(a,b,hi=2100,sw=0,kind='flush',hb=false)=>({a,b,lo:0,hi,sw,kind,hb});window.win=(a,b,lo=900,hi=2200)=>({a,b,lo,hi,w:1});</script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="versions.js"></script>
@@ -247,11 +247,11 @@ function buildWalls(list){
       else if(o.kind){ // door leaf
         const L=o.b-o.a,dc=DOOR_COL[o.kind]||DOOR_COL.flush,mat=new THREE.MeshLambertMaterial({color:dc});
         const leaf=new THREE.Mesh(new THREE.BoxGeometry(m(L-10),m(o.hi-10),0.04),mat);leaf.castShadow=leaf.receiveShadow=true;
-        const piv=new THREE.Group();piv.position.set(hz?m(o.a):m(c),0,hz?m(c):m(o.a));
-        leaf.position.set(m(L/2),m(o.hi/2),0);piv.add(leaf);
+        const piv=new THREE.Group(),ha=o.hb?o.b:o.a;piv.position.set(hz?m(ha):m(c),0,hz?m(c):m(ha));
+        leaf.position.set(m(o.hb?-L/2:L/2),m(o.hi/2),0);piv.add(leaf);
         const el=new THREE.LineSegments(new THREE.EdgesGeometry(leaf.geometry),edgeMat);el.position.copy(leaf.position);piv.add(el);
-        const hd=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.02,0.06),handleMat);hd.position.set(m(L-90),1.0,0);piv.add(hd);
-        const base=hz?0:-Math.PI/2;piv.rotation.y=base+(o.sw?(hz?o.sw*-Math.PI/2:o.sw*Math.PI/2)*0.92:0);wallGroup.add(piv)}
+        const hd=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.02,0.06),handleMat);hd.position.set(m(o.hb?-(L-90):L-90),1.0,0);piv.add(hd);
+        const base=hz?0:-Math.PI/2;piv.rotation.y=base+(o.sw?(hz?o.sw*-Math.PI/2:o.sw*Math.PI/2)*0.92*(o.hb?-1:1):0);wallGroup.add(piv)}
       cur=o.b;
     }
     piece(cur,e,0,h);

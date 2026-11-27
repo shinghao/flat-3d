@@ -17,7 +17,7 @@
      furniture: [ item, … ]
    }
 
-   item = { type, name, x, y, w, d, h, rot, color }
+   item = { type, name, x, y, w, d, h, rot, color, room? }   (room: optional tag, e.g. 'study', used to swap a room between versions)
      x,y  = centre of the item on the plan (mm); z = height off the floor (overhead cabinets)
      extras: curtain {open: 0–1, sheer: true} · wardrobe {gap: floating mm, niche: [fromH, toH]} · panel {door: [from, to] mm along its width}
      w    = width (left↔right when rot=0), d = depth (front↔back), h = height
@@ -68,22 +68,52 @@ window.BTO_VERSIONS = [
       { type: 'wallbed', name: 'Queen wall bed – guest room, flush wall-colour panels', x: 3535, y: 1170, w: 1740, d: 450, h: 2600, rot: 270, bedLength: 2100, color: '#eeebe5' },
       // BEDROOM 3 — STUDY for two. Desks on the long solid wall (shared with living): daylight from the side, no screen glare, window kept clear.
       // Shing: 160 cm motorised desk, dual 27" monitors on a dual arm (toed in), laptop on stand. Partner: 120 cm desk, one 27" monitor. Closed cabinet opposite.
-      { type: 'standdesk', name: 'Shing – motorised standing desk 160 × 75', x: 8685, y: 1060, w: 1600, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
-      { type: 'monitor', name: '27" monitor (left) on dual arm', x: 8900, y: 750, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 78 },
-      { type: 'monitor', name: '27" monitor (right) on dual arm', x: 8900, y: 1370, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 102 },
-      { type: 'rug', name: 'Desk mat', x: 8540, y: 1060, z: 740, w: 900, d: 400, h: 3, rot: 90, color: '#3a3d42' },
-      { type: 'box', name: 'Keyboard', x: 8500, y: 1060, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#2a2c2f' },
-      { type: 'box', name: 'Laptop on stand', x: 8800, y: 1720, z: 740, w: 320, d: 240, h: 170, rot: 90, color: '#b9bcc0' },
-      { type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 1060, w: 680, d: 680, h: 1250, rot: 270, color: '#3a3d42' },
-      { type: 'standdesk', name: 'Partner – motorised standing desk 120 × 75', x: 8685, y: 2510, w: 1200, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
-      { type: 'monitor', name: '27" monitor on arm', x: 8900, y: 2510, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 90 },
-      { type: 'box', name: 'Keyboard', x: 8500, y: 2510, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#e6e6e3' },
-      { type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 2510, w: 680, d: 680, h: 1250, rot: 270, color: '#8c9096' },
-      { type: 'wardrobe', name: 'Study cabinet – full height, closed (books, cameras, electronics, documents)', x: 6430, y: 1725, w: 2250, d: 400, h: 2600, rot: 270, color: '#eeebe5' },
-      { type: 'plant', name: 'Tall plant (window corner)', x: 6480, y: 380, w: 450, d: 450, h: 1500, rot: 0, color: '#5f7d5a' },
+      { room: 'study', type: 'standdesk', name: 'Shing – motorised standing desk 160 × 75', x: 8685, y: 1060, w: 1600, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
+      { room: 'study', type: 'monitor', name: '27" monitor (left) on dual arm', x: 8900, y: 750, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 78 },
+      { room: 'study', type: 'monitor', name: '27" monitor (right) on dual arm', x: 8900, y: 1370, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 102 },
+      { room: 'study', type: 'rug', name: 'Desk mat', x: 8540, y: 1060, z: 740, w: 900, d: 400, h: 3, rot: 90, color: '#3a3d42' },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 8500, y: 1060, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#2a2c2f' },
+      { room: 'study', type: 'box', name: 'Laptop on stand', x: 8800, y: 1720, z: 740, w: 320, d: 240, h: 170, rot: 90, color: '#b9bcc0' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 1060, w: 680, d: 680, h: 1250, rot: 270, color: '#3a3d42' },
+      { room: 'study', type: 'standdesk', name: 'Partner – motorised standing desk 120 × 75', x: 8685, y: 2510, w: 1200, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
+      { room: 'study', type: 'monitor', name: '27" monitor on arm', x: 8900, y: 2510, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 90 },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 8500, y: 2510, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#e6e6e3' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 2510, w: 680, d: 680, h: 1250, rot: 270, color: '#8c9096' },
+      { room: 'study', type: 'wardrobe', name: 'Study cabinet – full height, closed (books, cameras, electronics, documents)', x: 6430, y: 1725, w: 2250, d: 400, h: 2600, rot: 270, color: '#eeebe5' },
+      { room: 'study', type: 'plant', name: 'Tall plant (window corner)', x: 6480, y: 380, w: 450, d: 450, h: 1500, rot: 0, color: '#5f7d5a' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
       { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
       { type: 'sofa', style: 'soft', seats: 3, name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }
     ]
   }
 ];
+
+// ---- Version 2: same as Version 1, study flipped -------------------------------------------------
+// Desks on the Bedroom 2 wall (quieter, away from the TV); full-length cabinet on the living-room wall;
+// study door re-hung on the other side (new concealed doors anyway) so it doesn't swing into the desks.
+(function () {
+  const v1 = window.BTO_VERSIONS.find(v => v.id === 'v1');
+  if (!v1) return;
+  window.BTO_VERSIONS.push({
+    ...v1,
+    id: 'v2',
+    name: 'Version 2',
+    note: 'Version 1 with the study flipped: desks on the quiet Bedroom 2 wall, full-length cabinet on the living-room wall',
+    removeWalls: [...(v1.removeWalls || []), 'br3-corridor'],
+    addWalls: [...(v1.addWalls || []), [6170, 3875, 9120, 3875, 120, [door(6300, 7150, 2100, -1, 'flush', true)]]],
+    furniture: v1.furniture.filter(i => i.room !== 'study').concat([
+      { room: 'study', type: 'standdesk', name: 'Shing – motorised standing desk 160 × 75', x: 6605, y: 1060, w: 1600, d: 750, h: 740, rot: 270, color: '#e9e8e4' },
+      { room: 'study', type: 'monitor', name: '27" monitor (left) on dual arm', x: 6390, y: 1370, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 258 },
+      { room: 'study', type: 'monitor', name: '27" monitor (right) on dual arm', x: 6390, y: 750, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 282 },
+      { room: 'study', type: 'rug', name: 'Desk mat', x: 6750, y: 1060, z: 740, w: 900, d: 400, h: 3, rot: 270, color: '#3a3d42' },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 6790, y: 1060, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#2a2c2f' },
+      { room: 'study', type: 'box', name: 'Laptop on stand', x: 6490, y: 1720, z: 740, w: 320, d: 240, h: 170, rot: 270, color: '#b9bcc0' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7310, y: 1060, w: 680, d: 680, h: 1250, rot: 90, color: '#3a3d42' },
+      { room: 'study', type: 'standdesk', name: 'Partner – motorised standing desk 120 × 75', x: 6605, y: 2510, w: 1200, d: 750, h: 740, rot: 270, color: '#e9e8e4' },
+      { room: 'study', type: 'monitor', name: '27" monitor on arm', x: 6390, y: 2510, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 270 },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 6790, y: 2510, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#e6e6e3' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7310, y: 2510, w: 680, d: 680, h: 1250, rot: 90, color: '#8c9096' },
+      { room: 'study', type: 'wardrobe', name: 'Study cabinet – full length, floor to ceiling, closed', x: 8860, y: 1957, w: 3715, d: 400, h: 2600, rot: 90, color: '#eeebe5' }
+    ])
+  });
+})();
