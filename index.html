@@ -206,12 +206,13 @@ const hemi=new THREE.HemisphereLight(0xffffff,0x8a8070,0.75);scene.add(hemi);
 const keyA=new THREE.DirectionalLight(0xffffff,0.55);keyA.position.set(-6,14,-8);scene.add(keyA);const keyB=new THREE.DirectionalLight(0xffffff,0.25);keyB.position.set(10,8,12);scene.add(keyB);
 const wallMat=new THREE.MeshLambertMaterial({color:0xf7f6f2});
 const lowMat=new THREE.MeshLambertMaterial({color:0xdedbd3});
-const glassMat=new THREE.MeshLambertMaterial({color:0x9fc4d6,transparent:true,opacity:0.35,side:THREE.DoubleSide,depthWrite:false});
+const glassMat=new THREE.MeshLambertMaterial({color:0x7fa8a4,transparent:true,opacity:0.42,side:THREE.DoubleSide,depthWrite:false});
+const frameMat=new THREE.MeshLambertMaterial({color:0x9ca2a7});
 const edgeMat=new THREE.LineBasicMaterial({color:0x55585c,transparent:true,opacity:0.5});
 const wallGroup=new THREE.Group(),furnGroup=new THREE.Group();scene.add(wallGroup,furnGroup);
 let wallColl=[],furnColl=[];
 
-function clearGroup(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==wallMat&&o.material!==lowMat&&o.material!==glassMat&&o.material!==edgeMat&&o.material.dispose)o.material.dispose()})}}
+function clearGroup(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==wallMat&&o.material!==lowMat&&o.material!==glassMat&&o.material!==frameMat&&o.material!==edgeMat&&o.material.dispose)o.material.dispose()})}}
 function box(g,x0,x1,z0,z1,y0,y1,mat){
   if(y0<1500&&y1>300)wallColl.push([x0,x1,z0,z1]);
   const geo=new THREE.BoxGeometry(m(x1-x0),m(y1-y0),m(z1-z0)),mesh=new THREE.Mesh(geo,mat);
@@ -228,7 +229,13 @@ function buildWalls(list){
     for(const o of [...(ops||[])].sort((p,q)=>p.a-q.a)){
       piece(cur,o.a,0,h);piece(o.a,o.b,0,o.lo);piece(o.a,o.b,o.hi,h);
       if(o.w){const gl=new THREE.Mesh(new THREE.PlaneGeometry(m(o.b-o.a),m(o.hi-o.lo)),glassMat);
-        gl.position.set(hz?m((o.a+o.b)/2):m(c),m((o.lo+o.hi)/2),hz?m(c):m((o.a+o.b)/2));if(!hz)gl.rotation.y=Math.PI/2;wallGroup.add(gl)}
+        gl.position.set(hz?m((o.a+o.b)/2):m(c),m((o.lo+o.hi)/2),hz?m(c):m((o.a+o.b)/2));if(!hz)gl.rotation.y=Math.PI/2;wallGroup.add(gl);
+        // aluminium frame: perimeter + mullions (casement / fixed panels)
+        const fr=(a0,a1,y0,y1)=>{const g=new THREE.BoxGeometry(hz?m(a1-a0):0.07,m(y1-y0),hz?0.07:m(a1-a0)),mm=new THREE.Mesh(g,frameMat);
+          mm.position.set(hz?m((a0+a1)/2):m(c),m((y0+y1)/2),hz?m(c):m((a0+a1)/2));wallGroup.add(mm)};
+        fr(o.a,o.b,o.lo,o.lo+50);fr(o.a,o.b,o.hi-50,o.hi);fr(o.a,o.a+50,o.lo,o.hi);fr(o.b-50,o.b,o.lo,o.hi);
+        const np=Math.max(2,Math.round((o.b-o.a)/750));for(let i=1;i<np;i++){const x=o.a+i*(o.b-o.a)/np;fr(x-22,x+22,o.lo,o.hi)}
+        if(o.hi-o.lo>1600)fr(o.a,o.b,o.hi-650,o.hi-610)}
       cur=o.b;
     }
     piece(cur,e,0,h);
