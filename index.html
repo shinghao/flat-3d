@@ -170,7 +170,7 @@ const SHELL_WALLS=[
   [9120,1130,9120,3875,P,[],H,'br3-living'],
   [3250,3875,6170,3875,P,[door(5050,5900,2100,-1)],H,'br2-corridor'],
   [6170,3875,9120,3875,P,[door(6300,7150,2100,-1)],H,'br3-corridor'],
-  [9120,1130,14470,1130,S,[win(9300,14300)]],
+  [9120,1130,14470,1130,S,[win(9300,11930),win(12030,14300)]],
   [14470,1130,14470,8575,S],
   [11870,6725,14470,6725,250],
   [11870,6725,11870,8575,250,[door(7150,7950,2000,0,'steel')]],
@@ -238,10 +238,10 @@ function buildWalls(list){
         const fr=(a0,a1,y0,y1,mt=frameMat,dp=0.06,off=0)=>{const g=new THREE.BoxGeometry(hz?m(a1-a0):dp,m(y1-y0),hz?dp:m(a1-a0)),mm=new THREE.Mesh(g,mt);
           mm.position.set(hz?m((a0+a1)/2):m(c)+off,m((y0+y1)/2),hz?m(c)+off:m((a0+a1)/2));mm.castShadow=true;wallGroup.add(mm)};
         fr(o.a,o.b,o.lo,o.lo+45);fr(o.a,o.b,o.hi-45,o.hi);fr(o.a,o.a+45,o.lo,o.hi);fr(o.b-45,o.b,o.lo,o.hi);
-        const tr=o.hi-Math.round((o.hi-o.lo)*0.3);fr(o.a,o.b,tr-20,tr+20);
+        const tr=o.hi-Math.round((o.hi-o.lo)*0.22),br=o.lo+Math.round((o.hi-o.lo)*0.22);fr(o.a,o.b,tr-20,tr+20);fr(o.a,o.b,br-20,br+20);
         const np=Math.max(2,Math.round((o.b-o.a)/500));
         for(let i=1;i<np;i++){const x=o.a+i*(o.b-o.a)/np;fr(x-18,x+18,o.lo,o.hi)}
-        for(let i=0;i<np;i+=2){const x=o.a+(i+0.82)*(o.b-o.a)/np;for(const sd of[-1,1])fr(x-8,x+8,o.lo+(tr-o.lo)*0.45,o.lo+(tr-o.lo)*0.45+120,handleMat,0.02,sd*0.045)}
+        for(let i=0;i<np;i+=2){const x=o.a+(i+0.82)*(o.b-o.a)/np,hy=(br+tr)/2-60;for(const sd of[-1,1])fr(x-8,x+8,hy,hy+120,handleMat,0.02,sd*0.045)}
         for(const sd of[-1,1]){const g=new THREE.BoxGeometry(hz?m(o.b-o.a+60):0.07,0.025,hz?0.07:m(o.b-o.a+60)),sl=new THREE.Mesh(g,sillMat);
           sl.position.set(hz?m((o.a+o.b)/2):m(c)+sd*m(t/2+20),m(o.lo)-0.0125,hz?m(c)+sd*m(t/2+20):m((o.a+o.b)/2));sl.receiveShadow=true;wallGroup.add(sl)}}
       else if(o.kind){ // door leaf
