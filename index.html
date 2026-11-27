@@ -494,8 +494,9 @@ function drawMini(){mg.clearRect(0,0,300,200);mg.drawImage(base,0,0);
   mg.fillStyle='#e2552b';mg.beginPath();mg.arc(x,y,6,0,7);mg.fill();mg.strokeStyle='#fff';mg.lineWidth=2;mg.stroke()}
 
 // =================== SUN & HEAT ===================
-// Assumes the top of the plan (bedroom windows) faces north. Change PLAN_NORTH_DEG if a compass says otherwise.
-const PLAN_NORTH_DEG=0, LAT=1.33*Math.PI/180;
+// Orientation from the site plan: top of the plan (bedroom windows) faces ~8° west of north.
+// PLAN_NORTH_DEG = how far true north is clockwise from the top of the plan.
+const PLAN_NORTH_DEG=8, LAT=1.33*Math.PI/180;
 const sunLight=new THREE.DirectionalLight(0xfff1d6,1.0);sunLight.castShadow=true;sunLight.visible=false;
 sunLight.shadow.mapSize.set(2048,2048);Object.assign(sunLight.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:70});sunLight.shadow.bias=-0.0004;sunLight.shadow.normalBias=0.02;
 sunLight.target.position.set(CX,0,CZ);scene.add(sunLight,sunLight.target);
