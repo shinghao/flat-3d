@@ -26,7 +26,7 @@
             Bed head / sofa back / wardrobe back sit on the back side.
             rot 90 → back faces right · 180 → back faces bottom · 270 → back faces left
      style: 'soft' on a sofa = plush cloud-style cushions; seats: number of seat cushions
-     wallbed {bedLength} — shown closed; the Guest mode button drops it
+     wallbed {bedLength} — shown folded up; tap it in the viewer to fold it down
      standdesk · monitor {arm: drop to desk mm} · officechair
      type = bed | sofa | table | desk | chair | wardrobe | cabinet | shelf | counter
             | fridge | tv | rug | plant | lamp | box | wallbed | curtain | panel
