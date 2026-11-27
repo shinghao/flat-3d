@@ -39,7 +39,7 @@ window.BTO_VERSIONS = [
   {
     id: 'v1',
     name: 'Version 1',
-    note: 'King bed, wrap-around wardrobe, curtains, TV wall, plush sofa, study + guest room, shoe cabinet, hidden storeroom door · Modern Minimal',
+    note: 'King bed, wrap-around wardrobe, curtains, TV wall, plush sofa, study, guest room (wall bed), shoe cabinet, hidden storeroom door · Modern Minimal',
     finishes: { wall: '#f4f3ef', floor: { bedroom: '#d9d7d2', living: '#e2e0db' } },
     // Service yard: HDB hands it over open; add a window (needs a permit, done by the window supplier)
     removeWalls: ['yard-parapet'],
@@ -63,12 +63,12 @@ window.BTO_VERSIONS = [
       { type: 'wardrobe', name: 'Shoe cabinet – flush, wall to wall, floor to ceiling (key tray inside)', x: 9950, y: 7598, w: 1505, d: 400, h: 2600, rot: 270, color: '#eeebe5' },
       // STOREROOM (household shelter) — concealed door: full-height wall-colour panel wall on the foyer side, hidden push-latch door over the steel shelter door
       { type: 'panel', name: 'Hidden door + panel wall – storeroom (shelter)', x: 11695, y: 7475, w: 1750, d: 40, h: 2600, rot: 90, door: [500, 1400], color: '#f0eee9' },
-      // BEDROOM 3 — STUDY + GUEST ROOM: queen wall bed on the door wall (folds toward the window), standing desk under the north window,
-      // full-height study cabinet on the bedroom-2 wall (closed storage + open display for soft toys). Tap "Guest mode" to drop the bed.
-      { type: 'wallbed', name: 'Queen wall bed – flush wall-colour panels (folds down for guests)', x: 8170, y: 3590, w: 1740, d: 450, h: 2600, rot: 180, bedLength: 2100, color: '#eeebe5' },
+      // BEDROOM 2 — GUEST ROOM: queen wall bed on the master-bedroom-side wall, folds out toward bedroom 3. Rest of the room free for daily use (TBD).
+      { type: 'wallbed', name: 'Queen wall bed – guest room, flush wall-colour panels', x: 3535, y: 1170, w: 1740, d: 450, h: 2600, rot: 270, bedLength: 2100, color: '#eeebe5' },
+      // BEDROOM 3 — STUDY: standing desk under the north window, full-height study cabinet on the bedroom-2 wall (closed storage + open display for soft toys).
       { type: 'desk', name: 'Standing desk 140 × 70 (height-adjustable)', x: 7650, y: 470, w: 1400, d: 700, h: 750, rot: 0, color: '#e4e4e2' },
       { type: 'box', name: 'Monitor on arm', x: 7650, y: 260, z: 780, w: 620, d: 60, h: 380, rot: 0, color: '#1d1f22' },
-      { type: 'chair', name: 'Ergonomic chair', x: 7650, y: 960, w: 650, d: 650, h: 1150, rot: 180, color: '#4a4d52' },
+      { type: 'chair', name: 'Ergonomic chair', x: 7650, y: 1150, w: 650, d: 650, h: 1150, rot: 180, color: '#4a4d52' },
       { type: 'wardrobe', name: 'Study cabinet – books, cameras, electronics', x: 6405, y: 1000, w: 1500, d: 350, h: 2600, rot: 270, color: '#eeebe5' },
       { type: 'shelf', name: 'Display shelves – soft toys', x: 6405, y: 2300, w: 1100, d: 350, h: 2600, rot: 270, color: '#eeebe5' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
