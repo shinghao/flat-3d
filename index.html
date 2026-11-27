@@ -331,6 +331,19 @@ function makeItem(it){
       part(-W,W,-D,-D+200,seat-120,h,col);part(-W,-W+150,-D,D,seat-120,seat+180,col);part(W-150,W,-D,D,seat-120,seat+180,col);break}
     case 'table':case 'desk':{h=h||750;part(-W,W,-D,D,h-30,h);legs(h-30);break}
     case 'chair':{h=h||850;const seat=450;part(-W+20,W-20,-D+20,D-20,seat-40,seat);legs(seat-40,35);part(-W+20,W-20,-D+20,-D+60,seat,h);break}
+    case 'standdesk':{h=h||740;const metal='#2b2d30';part(-W,W,-D,D,h-25,h,col,6);
+      for(const sx of[-1,1]){const x=sx*(W-140);part(x-40,x+40,-60,40,40,h-25,metal);part(x-30,x+30,-D+40,D-40,0,40,metal);part(x-45,x+45,-D+60,D-60,h-60,h-25,metal)}
+      part(-W+140,W-140,-40,10,h-60,h-35,metal);part(-W+200,W-200,-D+30,-D+130,h-150,h-60,'#3a3c40');break}
+    case 'monitor':{h=h||365;const arm=+it.arm||150;part(-W,W,-20,20,0,h,'#16181b',8);part(-W+12,W-12,20,22,12,h-12,'#262c33');
+      part(-20,20,-90,-40,h*0.35,h*0.35+60,'#2b2d30');part(-15,15,-120,-90,-arm,h*0.35+40,'#2b2d30');break}
+    case 'officechair':{h=h||1250;const base='#2b2d30';
+      for(let k=0;k<5;k++){const a=k*2*Math.PI/5,sp=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.03,0.045),new THREE.MeshLambertMaterial({color:base}));
+        sp.position.set(0.15*Math.cos(a),0.07,0.15*Math.sin(a));sp.rotation.y=-a;inner.add(sp);
+        const cs=new THREE.Mesh(new THREE.SphereGeometry(0.03,10,8),new THREE.MeshLambertMaterial({color:base}));cs.position.set(0.3*Math.cos(a),0.03,0.3*Math.sin(a));inner.add(cs)}
+      cyl(28,28,70,420,0,0,'#5a5d61');part(-250,250,-230,250,410,490,col,35);
+      const back=part(-235,235,-270,-210,540,1080,col,30);back.rotation.x=-0.12;const head=part(-140,140,-310,-250,1110,1230,col,25);head.rotation.x=-0.12;
+      part(-25,25,-300,-250,420,620,base);for(const sx of[-1,1]){part(sx*260-15,sx*260+15,-60,20,430,640,base);part(sx*260-35,sx*260+35,-180,140,640,670,'#3a3c40',10)}
+      break}
     case 'wallbed':{h=h||2300;const body=part(-W,W,-D,D,0,h);const tx=laminate.clone();tx.needsUpdate=true;tx.repeat.set(Math.max(1,w/600),Math.max(1,h/600));body.material.map=tx;body.material.needsUpdate=true;
       const ol=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),outlineMat);ol.position.copy(body.position);inner.add(ol);const gc=shade(col,0.62),L=+it.bedLength||2100;
       if(!guestMode){part(-W+60,-W+66,D,D+5,250,2200,gc);part(W-66,W-60,D,D+5,250,2200,gc);part(-W+60,W-60,D,D+5,2194,2200,gc);part(-W+60,W-60,D,D+5,250,256,gc);part(-120,120,D,D+8,1500,1520,shade(col,0.45))}
@@ -371,7 +384,7 @@ function makeItem(it){
   grp.position.set(m(+it.x),m(+it.z||0),m(+it.y));grp.rotation.y=-THREE.MathUtils.degToRad(+it.rot||0);
   grp.userData={item:it,h};
   // footprint AABB (plan mm) for walking collision
-  if(type!=='rug'&&type!=='curtain'&&!((+it.z||0)>1500)){const a=THREE.MathUtils.degToRad(+it.rot||0),cs=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a)),hw=(W*cs+D*sn),hd=(W*sn+D*cs);
+  if(!['rug','curtain','monitor'].includes(type)&&!((+it.z||0)>1500)&&!((+it.z||0)>0&&type==='box')){const a=THREE.MathUtils.degToRad(+it.rot||0),cs=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a)),hw=(W*cs+D*sn),hd=(W*sn+D*cs);
     furnColl.push([+it.x-hw,+it.x+hw,+it.y-hd,+it.y+hd])}
   return grp;
 }

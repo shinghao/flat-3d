@@ -27,6 +27,7 @@
             rot 90 → back faces right · 180 → back faces bottom · 270 → back faces left
      style: 'soft' on a sofa = plush cloud-style cushions; seats: number of seat cushions
      wallbed {bedLength} — shown closed; the Guest mode button drops it
+     standdesk · monitor {arm: drop to desk mm} · officechair
      type = bed | sofa | table | desk | chair | wardrobe | cabinet | shelf | counter
             | fridge | tv | rug | plant | lamp | box | wallbed | curtain | panel
 
@@ -65,11 +66,21 @@ window.BTO_VERSIONS = [
       { type: 'panel', name: 'Hidden door + panel wall – storeroom (shelter)', x: 11695, y: 7475, w: 1750, d: 40, h: 2600, rot: 90, door: [500, 1400], color: '#f0eee9' },
       // BEDROOM 2 — GUEST ROOM: queen wall bed on the master-bedroom-side wall, folds out toward bedroom 3. Rest of the room free for daily use (TBD).
       { type: 'wallbed', name: 'Queen wall bed – guest room, flush wall-colour panels', x: 3535, y: 1170, w: 1740, d: 450, h: 2600, rot: 270, bedLength: 2100, color: '#eeebe5' },
-      // BEDROOM 3 — STUDY (professional): standing desk under the north window, full-height closed study cabinet along the bedroom-2 wall.
-      { type: 'desk', name: 'Standing desk 140 × 70 (height-adjustable)', x: 7650, y: 470, w: 1400, d: 700, h: 750, rot: 0, color: '#e4e4e2' },
-      { type: 'box', name: 'Monitor on arm', x: 7650, y: 260, z: 780, w: 620, d: 60, h: 380, rot: 0, color: '#1d1f22' },
-      { type: 'chair', name: 'Ergonomic chair', x: 7650, y: 1150, w: 650, d: 650, h: 1150, rot: 180, color: '#4a4d52' },
-      { type: 'wardrobe', name: 'Study cabinet – full height, closed (books, cameras, electronics, documents)', x: 6405, y: 1550, w: 2600, d: 350, h: 2600, rot: 270, color: '#eeebe5' },
+      // BEDROOM 3 — STUDY for two. Desks on the long solid wall (shared with living): daylight from the side, no screen glare, window kept clear.
+      // Shing: 160 cm motorised desk, dual 27" monitors on a dual arm (toed in), laptop on stand. Partner: 120 cm desk, one 27" monitor. Closed cabinet opposite.
+      { type: 'standdesk', name: 'Shing – motorised standing desk 160 × 75', x: 8685, y: 1060, w: 1600, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
+      { type: 'monitor', name: '27" monitor (left) on dual arm', x: 8900, y: 750, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 78 },
+      { type: 'monitor', name: '27" monitor (right) on dual arm', x: 8900, y: 1370, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 102 },
+      { type: 'rug', name: 'Desk mat', x: 8540, y: 1060, z: 740, w: 900, d: 400, h: 3, rot: 90, color: '#3a3d42' },
+      { type: 'box', name: 'Keyboard', x: 8500, y: 1060, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#2a2c2f' },
+      { type: 'box', name: 'Laptop on stand', x: 8800, y: 1720, z: 740, w: 320, d: 240, h: 170, rot: 90, color: '#b9bcc0' },
+      { type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 1060, w: 680, d: 680, h: 1250, rot: 270, color: '#3a3d42' },
+      { type: 'standdesk', name: 'Partner – motorised standing desk 120 × 75', x: 8685, y: 2510, w: 1200, d: 750, h: 740, rot: 90, color: '#e9e8e4' },
+      { type: 'monitor', name: '27" monitor on arm', x: 8900, y: 2510, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 90 },
+      { type: 'box', name: 'Keyboard', x: 8500, y: 2510, z: 743, w: 440, d: 140, h: 25, rot: 90, color: '#e6e6e3' },
+      { type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7980, y: 2510, w: 680, d: 680, h: 1250, rot: 270, color: '#8c9096' },
+      { type: 'wardrobe', name: 'Study cabinet – full height, closed (books, cameras, electronics, documents)', x: 6430, y: 1725, w: 2250, d: 400, h: 2600, rot: 270, color: '#eeebe5' },
+      { type: 'plant', name: 'Tall plant (window corner)', x: 6480, y: 380, w: 450, d: 450, h: 1500, rot: 0, color: '#5f7d5a' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
       { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
       { type: 'sofa', style: 'soft', seats: 3, name: 'Plush 3-seater sofa', x: 11935, y: 3930, w: 2400, d: 1050, h: 760, rot: 270, color: '#e3e0da' }
