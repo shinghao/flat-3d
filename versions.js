@@ -58,8 +58,8 @@ window.BTO_VERSIONS = [
       { type: 'curtain', name: 'Blackout curtain – bedroom 3', x: 7315, y: 190, w: 2170, d: 60, h: 2600, rot: 0, open: 0.75, color: '#d4d2cd' },
       { type: 'curtain', sheer: true, name: 'Sheer curtain – living (day)', x: 11795, y: 1320, w: 5150, d: 60, h: 2600, rot: 0, open: 0.35, color: '#fbfaf7' },
       { type: 'curtain', name: 'Dim-out curtain – living (night)', x: 11795, y: 1440, w: 5150, d: 60, h: 2600, rot: 0, open: 0.85, color: '#d8d6d1' },
-      // FOYER — full-height floating shoe cabinet on the kitchen-side wall, flush and wall-matched; key tray hidden inside at waist height
-      { type: 'wardrobe', name: 'Shoe cabinet – full height, flush, floating 20 cm (key tray inside)', x: 9950, y: 7690, w: 1380, d: 400, h: 2600, rot: 270, gap: 200, color: '#eeebe5' },
+      // FOYER — shoe cabinet filling the kitchen-side foyer wall end to end, floor to ceiling, flush and wall-matched; key tray hidden inside
+      { type: 'wardrobe', name: 'Shoe cabinet – flush, wall to wall, floor to ceiling (key tray inside)', x: 9950, y: 7598, w: 1505, d: 400, h: 2600, rot: 270, color: '#eeebe5' },
       // STOREROOM (household shelter) — concealed door: full-height wall-colour panel wall on the foyer side, hidden push-latch door over the steel shelter door
       { type: 'panel', name: 'Hidden door + panel wall – storeroom (shelter)', x: 11695, y: 7475, w: 1750, d: 40, h: 2600, rot: 90, door: [500, 1400], color: '#f0eee9' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
