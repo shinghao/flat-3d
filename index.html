@@ -91,7 +91,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <div class="top">
   <h1>Our 5-room BTO</h1>
   <p>5-Room Type 1(H) · 113 m²</p>
-  <div class="tools"><button class="vbtn" id="vbtn" aria-haspopup="dialog"><i></i><span id="vname">Empty shell</span></button><button class="vbtn sunb" id="sunb" aria-pressed="false"><i></i><span>Sun &amp; heat</span></button><button class="vbtn curb" id="curb" aria-pressed="false" hidden><i></i><span id="curt">Curtains open</span></button></div>
+  <div class="tools"><button class="vbtn" id="vbtn" aria-haspopup="dialog"><i></i><span id="vname">Empty shell</span></button><button class="vbtn sunb" id="sunb" aria-pressed="false"><i></i><span>Sun &amp; heat</span></button><button class="vbtn curb" id="curb" aria-pressed="false" hidden><i></i><span id="curt">Curtains open</span></button><button class="vbtn curb" id="gstb" aria-pressed="false" hidden><i></i><span id="gstt">Guest mode off</span></button></div>
 </div>
 <details class="sheet" id="sheet">
   <summary>Details</summary>
@@ -331,6 +331,15 @@ function makeItem(it){
       part(-W,W,-D,-D+200,seat-120,h,col);part(-W,-W+150,-D,D,seat-120,seat+180,col);part(W-150,W,-D,D,seat-120,seat+180,col);break}
     case 'table':case 'desk':{h=h||750;part(-W,W,-D,D,h-30,h);legs(h-30);break}
     case 'chair':{h=h||850;const seat=450;part(-W+20,W-20,-D+20,D-20,seat-40,seat);legs(seat-40,35);part(-W+20,W-20,-D+20,-D+60,seat,h);break}
+    case 'wallbed':{h=h||2300;const body=part(-W,W,-D,D,0,h);const tx=laminate.clone();tx.needsUpdate=true;tx.repeat.set(Math.max(1,w/600),Math.max(1,h/600));body.material.map=tx;body.material.needsUpdate=true;
+      const ol=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),outlineMat);ol.position.copy(body.position);inner.add(ol);const gc=shade(col,0.62),L=+it.bedLength||2100;
+      if(!guestMode){part(-W+60,-W+66,D,D+5,250,2200,gc);part(W-66,W-60,D,D+5,250,2200,gc);part(-W+60,W-60,D,D+5,2194,2200,gc);part(-W+60,W-60,D,D+5,250,256,gc);part(-120,120,D,D+8,1500,1520,shade(col,0.45))}
+      else{part(-W+60,W-60,D,D+L,140,420,shade(col,0.9),20);part(-W+90,W-90,D+20,D+L-20,420,640,'#f3f1ec',60);
+        const pw=(w-200)/2;for(let i=0;i<2;i++){const x0=-W+100+i*pw;part(x0+20,x0+pw-20,D+40,D+440,630,760,'#ffffff',60)}
+        part(-W+90,W-90,D+L-700,D+L-20,635,665,'#dfe3e6',15);for(const sx of[-1,1])part(sx*(W-120)-25,sx*(W-120)+25,D+L-90,D+L-40,0,140,gc);
+        const a=THREE.MathUtils.degToRad(+it.rot||0),cs=Math.cos(a),sn=Math.sin(a),pts=[[-W,D],[W,D],[-W,D+L],[W,D+L]].map(([lx,lz])=>[+it.x+lx*cs-lz*sn,+it.y+lx*sn+lz*cs]);
+        furnColl.push([Math.min(...pts.map(p=>p[0])),Math.max(...pts.map(p=>p[0])),Math.min(...pts.map(p=>p[1])),Math.max(...pts.map(p=>p[1]))])}
+      break}
     case 'panel':{h=h||2600;const body=part(-W,W,-D,D,0,h);const tx=laminate.clone();tx.needsUpdate=true;tx.repeat.set(Math.max(1,w/600),Math.max(1,h/600));body.material.map=tx;body.material.needsUpdate=true;
       const gc=shade(col,0.62),dr=it.door||[0,0],n=Math.max(1,Math.round(w/600));
       for(let i=1;i<n;i++){const x=-W+i*w/n;if(x>dr[0]-W+80&&x<dr[1]-W-80)continue;part(x-3,x+3,D,D+4,0,h,gc)}
@@ -368,7 +377,7 @@ function makeItem(it){
 }
 
 // =================== VERSIONS ===================
-let curV=null,curtainsClosed=false;
+let curV=null,curtainsClosed=false,guestMode=false;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dims=it=>[it.w,it.d,it.h].filter(Boolean).map(v=>Math.round(+v)).join(' × ')+' mm';
 function applyVersion(id){
@@ -387,6 +396,7 @@ function applyVersion(id){
   document.getElementById('inote').textContent=items.length?'Tap an item to find it.':'';
   document.getElementById('ti').textContent=items.length?`Items (${items.length})`:'Items';
   document.getElementById('curb').hidden=!items.some(i=>i.type==='curtain');
+  document.getElementById('gstb').hidden=!items.some(i=>i.type==='wallbed');
   renderVList();drawMiniBase();
   try{localStorage.setItem('bto-ver',v.id)}catch(e){}
   if(location.hash.slice(1)!==v.id){try{history.replaceState(null,'','#'+v.id)}catch(e){location.hash=v.id}}
@@ -398,6 +408,8 @@ function renderVList(){
 const vlist=document.getElementById('vlist');
 document.getElementById('curb').onclick=()=>{curtainsClosed=!curtainsClosed;const b=document.getElementById('curb');b.classList.toggle('on',curtainsClosed);b.setAttribute('aria-pressed',curtainsClosed);
   document.getElementById('curt').textContent=curtainsClosed?'Curtains closed':'Curtains open';applyVersion(curV.id)};
+document.getElementById('gstb').onclick=()=>{guestMode=!guestMode;const b=document.getElementById('gstb');b.classList.toggle('on',guestMode);b.setAttribute('aria-pressed',guestMode);
+  document.getElementById('gstt').textContent=guestMode?'Guest mode on':'Guest mode off';applyVersion(curV.id)};
 document.getElementById('vbtn').onclick=()=>{renderVList();vlist.classList.add('show')};
 vlist.addEventListener('click',e=>{const b=e.target.closest('.vitem');if(b)applyVersion(b.dataset.id);if(b||e.target===vlist)vlist.classList.remove('show')});
 addEventListener('keydown',e=>{if(e.key==='Escape')vlist.classList.remove('show')});
