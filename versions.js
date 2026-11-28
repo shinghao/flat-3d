@@ -69,17 +69,17 @@ window.BTO_VERSIONS = [
       // BEDROOM 2 — GUEST ROOM: queen wall bed on the master-bedroom-side wall, folds out toward bedroom 3. Rest of the room free for daily use (TBD).
       { type: 'wallbed', name: 'Queen wall bed – guest room, flush wall-colour panels', x: 3535, y: 1170, w: 1740, d: 450, h: 2600, rot: 270, bedLength: 2100, color: '#eeebe5' },
       // BEDROOM 3 — STUDY for two. Desks on the Bedroom 2 wall (quiet, daylight from the side, window clear); full-length closed cabinet on the living-room wall.
-      // One shared 2.55 m desk (Shing: dual 27" on a dual arm; partner: one 27"), ends ~1 m before the door wall so the doorway is clear. Door re-hung on the other side.
-      { room: 'study', type: 'standdesk', name: 'Shared desk 255 × 70 – one top, motorised 3-leg frame', x: 6580, y: 1525, w: 2550, d: 700, h: 740, rot: 270, color: '#e9e8e4' },
-      { room: 'study', type: 'monitor', name: 'Shing – 27" monitor (left) on dual arm', x: 6390, y: 1310, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 258 },
-      { room: 'study', type: 'monitor', name: 'Shing – 27" monitor (right) on dual arm', x: 6390, y: 690, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 282 },
-      { room: 'study', type: 'rug', name: 'Desk mat', x: 6720, y: 1000, z: 740, w: 900, d: 400, h: 3, rot: 270, color: '#3a3d42' },
-      { room: 'study', type: 'box', name: 'Keyboard', x: 6760, y: 1000, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#2a2c2f' },
-      { room: 'study', type: 'box', name: 'Laptop on stand', x: 6460, y: 1620, z: 740, w: 300, d: 230, h: 170, rot: 270, color: '#b9bcc0' },
-      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7300, y: 1000, w: 680, d: 680, h: 1250, rot: 90, color: '#3a3d42' },
-      { room: 'study', type: 'monitor', name: 'Partner – 27" monitor on arm', x: 6390, y: 2290, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 270 },
-      { room: 'study', type: 'box', name: 'Keyboard', x: 6760, y: 2290, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#e6e6e3' },
-      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7300, y: 2290, w: 680, d: 680, h: 1250, rot: 90, color: '#8c9096' },
+      // Two motorised desks butted together, no gap (Shing 140 cm, dual 27"; partner 120 cm, one 27"), each with its own height. Ends ~95 cm before the door wall; door re-hung.
+      { room: 'study', type: 'standdesk', name: 'Shing – motorised standing desk 140 × 70', x: 6580, y: 950, w: 1400, d: 700, h: 740, rot: 270, color: '#e9e8e4' },
+      { room: 'study', type: 'standdesk', name: 'Partner – motorised standing desk 120 × 70 (butted, no gap)', x: 6580, y: 2250, w: 1200, d: 700, h: 740, rot: 270, color: '#e9e8e4' },
+      { room: 'study', type: 'monitor', name: 'Shing – 27" monitor (left) on dual arm', x: 6390, y: 1260, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 258 },
+      { room: 'study', type: 'monitor', name: 'Shing – 27" monitor (right) on dual arm', x: 6390, y: 640, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 282 },
+      { room: 'study', type: 'rug', name: 'Desk mat', x: 6720, y: 950, z: 740, w: 900, d: 400, h: 3, rot: 270, color: '#3a3d42' },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 6760, y: 950, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#2a2c2f' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7300, y: 950, w: 680, d: 680, h: 1250, rot: 90, color: '#3a3d42' },
+      { room: 'study', type: 'monitor', name: 'Partner – 27" monitor on arm', x: 6390, y: 2250, z: 900, w: 615, d: 40, h: 365, arm: 160, rot: 270 },
+      { room: 'study', type: 'box', name: 'Keyboard', x: 6760, y: 2250, z: 743, w: 440, d: 140, h: 25, rot: 270, color: '#e6e6e3' },
+      { room: 'study', type: 'officechair', name: 'Ergonomic chair (mesh, headrest)', x: 7300, y: 2250, w: 680, d: 680, h: 1250, rot: 90, color: '#8c9096' },
       { room: 'study', type: 'wardrobe', name: 'Study cabinet – full length, floor to ceiling, closed', x: 8860, y: 1957, w: 3715, d: 400, h: 2600, rot: 90, color: '#eeebe5' },
       // LIVING — TV on the long east wall; sofa placed for ~2.5 m eye-to-screen (65" 4K)
       { type: 'tv', name: 'Low TV ledge + wall-mounted 65" TV', x: 14190, y: 3930, w: 1800, d: 360, h: 300, rot: 90, color: '#dcdcd9' },
