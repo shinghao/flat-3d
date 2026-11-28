@@ -162,7 +162,7 @@ const SHELL_WALLS=[
   [0,0,3250,0,S,[win(750,2940)]],
   [3250,0,6170,0,S,[win(3400,5400)]],
   [6170,0,9120,0,S,[win(6300,8250)]],
-  [0,0,0,4995,S,[win(1110,4230)]],
+  [0,0,0,4995,S],
   [0,4995,1323,4995,S],
   [3250,0,3250,4995,P,[door(4050,4900,2100,-1)],H,'mb-br2'],
   [6170,0,6170,3875,P,[],H,'br2-br3'],
@@ -332,7 +332,7 @@ function makeItem(it){
     case 'table':case 'desk':{h=h||750;part(-W,W,-D,D,h-30,h);legs(h-30);break}
     case 'chair':{h=h||850;const seat=450;part(-W+20,W-20,-D+20,D-20,seat-40,seat);legs(seat-40,35);part(-W+20,W-20,-D+20,-D+60,seat,h);break}
     case 'standdesk':{h=h||740;const metal='#2b2d30';part(-W,W,-D,D,h-25,h,col,6);
-      for(const sx of[-1,1]){const x=sx*(W-140);part(x-40,x+40,-60,40,40,h-25,metal);part(x-30,x+30,-D+40,D-40,0,40,metal);part(x-45,x+45,-D+60,D-60,h-60,h-25,metal)}
+      for(const x of (w>2000?[-(W-140),0,W-140]:[-(W-140),W-140])){part(x-40,x+40,-60,40,40,h-25,metal);part(x-30,x+30,-D+40,D-40,0,40,metal);part(x-45,x+45,-D+60,D-60,h-60,h-25,metal)}
       part(-W+140,W-140,-40,10,h-60,h-35,metal);part(-W+200,W-200,-D+30,-D+130,h-150,h-60,'#3a3c40');break}
     case 'monitor':{h=h||365;const arm=+it.arm||150;part(-W,W,-20,20,0,h,'#16181b',8);part(-W+12,W-12,20,22,12,h-12,'#262c33');
       part(-20,20,-90,-40,h*0.35,h*0.35+60,'#2b2d30');part(-15,15,-120,-90,-arm,h*0.35+40,'#2b2d30');break}
@@ -572,7 +572,7 @@ const BANDS=[[0,0,0,4995,-1,0,0xff4a1c],[14470,1130,14470,8575,1,0,0xffb020],[0,
 for(const [x1,y1,x2,y2,dx,dy,c] of BANDS){const L=Math.hypot(x2-x1,y2-y1),hz=y1===y2;
   const b=new THREE.Mesh(new THREE.BoxGeometry(hz?m(L):0.06,m(H)+0.15,hz?0.06:m(L)),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0.6}));
   b.position.set(m((x1+x2)/2)+dx*0.17,m(H)/2,m((y1+y2)/2)+dy*0.17);sunGroup.add(b)}
-[[['Hot wall','Afternoon sun 1:30–7pm'],'#ff4a1c',-1.9,4.0,2.3],[['Morning sun','Wall only, no windows'],'#ffb020',16.3,4.0,4.8],
+[[['Hot wall','Afternoon sun on the outer wall'],'#ff4a1c',-1.9,4.0,2.3],[['Morning sun','Wall only, no windows'],'#ffb020',16.3,4.0,4.8],
  [['Soft north light','Little direct sun'],'#6fb7ff',4.6,4.0,-1.4],[['Kitchen window','Some sun Nov–Feb'],'#ffd98a',7.0,4.0,10.9]]
  .forEach(([t,c,x,y,z])=>{const s=textSprite(t,c);s.position.set(x,y,z);sunGroup.add(s)});
 // compass
